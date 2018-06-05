@@ -33,15 +33,15 @@ Upload to PyPI after this if for general use.
 # Get modules
 
 # Py3 to 2 from pasteurize:
-from __future__ import print_function
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import absolute_import
+#from __future__ import print_function
+#from __future__ import unicode_literals
+#from __future__ import division
+#from __future__ import absolute_import
 
 from builtins import open
 from builtins import str
-from future import standard_library
-standard_library.install_aliases()
+#from future import standard_library
+#standard_library.install_aliases()
 
 # To use a consistent encoding
 from codecs import open
@@ -52,7 +52,7 @@ import os
 import glob
 
 # Always prefer setuptools over distutils:
-import setuptools
+#import setuptools
 
 from setuptools import setup, find_packages
 
