@@ -33,7 +33,7 @@ include TODO.rst
 include COPYING
 
 # Include dependency specifications and Docker:
-include external_dependencies.rst
+include external_dependencies.txt
 include requirements.rst
 include Dockerfile
 
