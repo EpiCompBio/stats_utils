@@ -67,12 +67,18 @@ To use
 
     # Create a folder or a whole data science project, e.g. project_quickstart -n my_project
     cd my_project/results
-    mkdir tests ; cd tests
-    
-    Rscript run_PCA.R 
-    TO DO
-
-
+    mkdir tests
+    cd tests
+    # Paths aren't set so you'll need to add full paths to each script and have
+    the necessary dependencies installed
+    # Simulate some data:
+    python simulate_cont_var.py --createDF --sample-size=10000 --var-size=2000 -O cont_var_sim_data
+    # Run principal components on it:
+    Rscript run_PCA.R -h
+    Rscript run_PCA.R -I test_file.tsv -O my_PCA
+    # Check the outputs: 
+    head my_PCA.tsv
+    open my_PCA.svg
 
 Contribute
 ----------
