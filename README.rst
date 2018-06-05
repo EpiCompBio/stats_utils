@@ -85,10 +85,6 @@ Contribute
 
 .. _`Issue Tracker`: github.com/EpiCompBio/stats_utils/issues
 
-- `Source Code`_
-
-.. _`Source Code`: github.com/EpiCompBio/stats_utils
-
 Pull requests welcome!
 
 
@@ -96,5 +92,3 @@ Support
 -------
 
 If you have any issues, pull requests, etc. please report them in the issue tracker. 
-
-
