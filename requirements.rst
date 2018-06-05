@@ -7,7 +7,8 @@
 #future
 docopt
 #ruffus
-#pandas
+pandas
+scipy
 #cython
 #pysam
 #drmaa>=0.7
