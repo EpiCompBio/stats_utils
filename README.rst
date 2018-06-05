@@ -33,15 +33,7 @@ stats_utils
 .. For a discussion/approach see 
     http://tom.preston-werner.com/2010/08/23/readme-driven-development.html
 
-|short_description|
-
-
-|long_description|
-
-Features
---------
-
-- A collection of scripts for common procedures (e.g. PCA)
+A collection of scripts for common procedures (e.g. PCA)
 
 
 Requirements
