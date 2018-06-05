@@ -88,7 +88,7 @@ Contribute
 
 .. _`Source Code`: github.com/EpiCompBio/stats_utils
 
-- Pull requests welcome!
+Pull requests welcome!
 
 
 Support
