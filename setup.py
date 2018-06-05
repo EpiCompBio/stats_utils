@@ -52,7 +52,7 @@ import os
 import glob
 
 # Always prefer setuptools over distutils:
-#import setuptools
+import setuptools
 
 from setuptools import setup, find_packages
 
@@ -203,7 +203,17 @@ extra_files = package_files(os.path.join(here, 'templates'))
 
 # Include scripts that are run from the command line and make them available in
 # PATH:
-scripts = ['script_templates/*', 'simulation_scripts/*']
+executables = ['*.R', '*.py', '*.sh']
+
+def get_cli_scripts():
+    files = []
+    for filename in executables:
+        glob.iglob(os.path.join('**/', filename), recursive = True)
+        files.append(filename)
+    return(files)
+
+scripts = get_cli_scripts()
+print(scripts)
 #################
 
 

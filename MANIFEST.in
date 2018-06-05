@@ -28,7 +28,6 @@ include *.ini
 include LICENSE
 include INSTALL
 include README.rst
-include KNOWN_BUGS.rst
 include THANKS.rst
 include TODO.rst
 include COPYING
@@ -45,6 +44,8 @@ recursive-include docs *.py
 include docs/Makefile
 include docs/make.bat
 prune docs/_build
+include rsync.rst
+include substitution_vars.rst
 
 # Include files for tests:
 include tox.ini 
@@ -53,7 +54,9 @@ include run_travis_tests.sh
 recursive-include tests *
 
 # Include addtional files needed, example data, etc.:
-include data_examples *
+recursive-include stats_utils *.R
+recursive-include stats_utils *.sh
+recursive-include stats_utils *.txt
 
 # Files to exclude:
 exclude .gitignore
