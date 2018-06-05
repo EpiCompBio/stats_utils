@@ -1,19 +1,19 @@
-.. include:: substitution_vars.rst
+.. .. include:: substitution_vars.rst
 
 .. GitHub doe not render rst substitutions
 
 .. copy across your travis "build..." logo so that it appears in your Github page
 
-.. .. image:: https://travis-ci.org/|github_user|/|project_name|.svg?branch=master
-    :target: https://travis-ci.org/|github_user|/|project_name|
+.. .. image:: https://travis-ci.org/EpiCompBio/stats_utils.svg?branch=master
+    :target: https://travis-ci.org/EpiCompBio/stats_utils
 
 .. do the same for ReadtheDocs image:
 
 .. note that if your project is called project_Super readthedocs will convert
 .. it to project-super
 
-.. .. image:: https://readthedocs.org/projects/|project_name|/badge/?version=latest
-    :target: http://|project_name|.readthedocs.io/en/latest/?badge=latest
+.. .. image:: https://readthedocs.org/projects/stats_utils/badge/?version=latest
+    :target: http://stats_utils.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
  .. Edit manually:
@@ -26,7 +26,7 @@
 
 
 ################################################
-|project_name|
+stats_utils
 ################################################
 
 
@@ -44,28 +44,31 @@
 Features
 --------
 
-- Something really useful
-- Makes things faster
+- A collection of scripts for common procedures (e.g. PCA)
 
 
 Requirements
 ------------
 
-See requirements files and Dockerfile for full information. At the least you'll need:
+Various and this will probably get outdated quickly. Please see the individual script requirements.
 
-* CGATCore
+See also requirements files and Dockerfile for more information.
+
+Most of the scripts are R or Python though so at the least you'll need:
+
 * R >= 3.2
 * Python >= 3.5
 * r-docopt
 * r-data.table
 * r-ggplot2
 
+
 Installation
 ------------
 
 .. code-block:: bash
    
-    pip install git+git://github.com/|github_user|/|project_name|.git
+    pip install git+git://github.com/EpiCompBio/stats_utils.git
 
 
 To use
@@ -73,22 +76,20 @@ To use
 
 .. code-block:: bash
 
-    # Create a folder or a whole data science project, e.g. project_quickstart -n QTL_project
-    cd QTL_project/results
+    # Create a folder or a whole data science project, e.g. project_quickstart -n my_project
+    cd my_project/results
     mkdir tests ; cd tests
-    # Download test files, e.g.:
-    wget -nH -np -r --cut-dirs=4 -A .txt http://www.bios.unc.edu/research/genomic_software/Matrix_eQTL/Sample_Data/
-    python pipeline_QTL --help
-    python pipeline_QTL config
-    etc
+    
+    Rscript run_PCA.R 
+    TO DO
 
 
 
 Contribute
 ----------
 
-- Issue Tracker: github.com/|project_name|/|project_name|/issues
-- Source Code: github.com/|project_name|/|project_name|
+- Issue Tracker: github.com/EpiCompBio/stats_utils/issues
+- Source Code: github.com/EpiCompBio/stats_utils
 - Pull requests welcome!
 
 
