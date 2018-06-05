@@ -67,12 +67,13 @@ To use
     cd my_project/results
     mkdir tests
     cd tests
-    # Paths aren't set so you'll need to add full paths to each script and have the necessary dependencies installed
+    # You may need to install missing dependencies, e.g.:
+    conda install r-docopt r-data.table r-ggplot2 r-cowplot
     # Simulate some data:
-    python simulate_cont_var.py --createDF --sample-size=10000 --var-size=2000 -O cont_var_sim_data
+    simulate_cont_var.py --createDF --sample-size=10000 --var-size=2000 -O cont_var_sim_data
     # Run principal components on it:
-    Rscript run_PCA.R -h
-    Rscript run_PCA.R -I test_file.tsv -O my_PCA
+    run_PCA.R -h
+    run_PCA.R -I cont_var_sim_data.tsv -O my_PCA
     # Check the outputs: 
     head my_PCA.tsv
     open my_PCA.svg
