@@ -50,6 +50,7 @@ from codecs import open
 import sys
 import os
 import glob
+import itertools
 
 # Always prefer setuptools over distutils:
 import setuptools
@@ -208,12 +209,15 @@ executables = ['*.R', '*.py', '*.sh']
 def get_cli_scripts():
     files = []
     for filename in executables:
-        glob.iglob(os.path.join('**/', filename), recursive = True)
-        files.append(filename)
-    return(files)
+        scripts = [fn for fn in glob.glob(os.path.join('**/', filename),
+                                          recursive = True)
+                   if not os.path.basename(fn).startswith('__init__')
+                   ]
+        files.append(scripts)
+    flatten_list = list(itertools.chain.from_iterable(files))
+    return(flatten_list)
 
 scripts = get_cli_scripts()
-print(scripts)
 #################
 
 
