@@ -22,9 +22,6 @@
    .. image:: https://zenodo.org/badge/#######.svg
       :target: https://zenodo.org/badge/latestdoi/#####
 
-**IN PROGRESS**
-
-
 ################################################
 stats_utils
 ################################################

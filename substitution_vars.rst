@@ -8,14 +8,14 @@
 
 .. Fill in the variables:
 
-.. |project_name| replace::
+.. |project_name| replace:: stats_utils
 
-.. |short_description| replace::
+.. |short_description| replace:: Collection of utility scripts for common statistical routines
 
-.. |long_description| replace::
+.. |long_description| replace:: Collection of utility scripts for common statistical routines 
 
-.. |author_name| replace::
+.. |author_name| replace:: Antonio J Berlanga-Taylor, Deborah Schneider-Luftam, George Adams
 
-.. |license| replace::
+.. |license| replace:: GPL-3.0
 
-.. |author_email| replace::
+.. |author_email| replace:: a.berlanga@imperial.ac.uk
