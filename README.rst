@@ -54,7 +54,8 @@ Installation
 ------------
 
 .. code-block:: bash
-   
+    
+    # You may want to create a specific environment with conda first, then run:
     pip install git+git://github.com/EpiCompBio/stats_utils.git
 
 
@@ -70,13 +71,14 @@ To use
     # You may need to install missing dependencies, e.g.:
     conda install r-docopt r-data.table r-ggplot2 r-cowplot r-ggthemes
     # Simulate some data:
+    simulate_cont_var.py -h
     simulate_cont_var.py --createDF --sample-size=1000 --var-size=50 -O cont_var_sim_data
     # Run principal components on it:
     run_PCA.R -h
     run_PCA.R -I cont_var_sim_data.tsv
     # Check the outputs: 
-    head my_PCA.tsv
-    open my_PCA.svg
+    head cont_var_sim_data.tsv | cut -f1-5
+    open top_10_PCs_cont_var_sim_data.pca.svg
 
 Contribute
 ----------
