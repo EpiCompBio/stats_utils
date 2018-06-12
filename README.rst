@@ -70,6 +70,7 @@ To use
     # You may need to install missing dependencies, e.g.:
     conda install r-docopt r-data.table r-ggplot2 r-cowplot r-ggthemes
     # Simulate some data:
+    simulate_cont_var.py -h
     simulate_cont_var.py --createDF --sample-size=1000 --var-size=50 -O cont_var_sim_data
     # Run principal components on it:
     run_PCA.R -h
