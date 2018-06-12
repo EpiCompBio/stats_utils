@@ -70,10 +70,10 @@ To use
     # You may need to install missing dependencies, e.g.:
     conda install r-docopt r-data.table r-ggplot2 r-cowplot
     # Simulate some data:
-    simulate_cont_var.py --createDF --sample-size=10000 --var-size=2000 -O cont_var_sim_data
+    simulate_cont_var.py --createDF --sample-size=1000 --var-size=50 -O cont_var_sim_data
     # Run principal components on it:
     run_PCA.R -h
-    run_PCA.R -I cont_var_sim_data.tsv -O my_PCA
+    run_PCA.R -I cont_var_sim_data.tsv
     # Check the outputs: 
     head my_PCA.tsv
     open my_PCA.svg
