@@ -87,7 +87,6 @@ RUN pip install --upgrade pip numpy ; \
 RUN conda install -y r-docopt=0.4.5 r-data.table=1.10.4 r-ggplot2=2.2.1 ; \
     R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("cowplot", repos = "http://cran.us.r-project.org") ; library("cowplot")' ; \
     R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("ggthemes", repos = "http://cran.us.r-project.org") ; library("ggthemes")' ; \
-    R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("rprojroot", repos = "http://cran.us.r-project.org") ; library("rprojroot")'
 #R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("bigpca", repos = "http://cran.us.r-project.org") ; library("bigpca")' ; \
 
 # Install rpy2 with conda as pip version causes conflicts:
