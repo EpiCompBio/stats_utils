@@ -136,7 +136,9 @@ library(ggplot2)
 library(cowplot)
 # library(mice)
 
+# Source functions in separate R scripts:
 source(file.path(Rscripts_dir, 'moveme.R')) #, chdir = TRUE)
+source(file.path(Rscripts_dir, 'ggtheme.R'))
 ######################
 
 ######################
