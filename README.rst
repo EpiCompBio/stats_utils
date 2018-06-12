@@ -54,7 +54,8 @@ Installation
 ------------
 
 .. code-block:: bash
-   
+    
+    # You may want to create a specific environment with conda first, then run:
     pip install git+git://github.com/EpiCompBio/stats_utils.git
 
 
