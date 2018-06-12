@@ -75,8 +75,8 @@ To use
     run_PCA.R -h
     run_PCA.R -I cont_var_sim_data.tsv
     # Check the outputs: 
-    head my_PCA.tsv
-    open my_PCA.svg
+    head cont_var_sim_data.tsv | cut -f1-5
+    open top_10_PCs_cont_var_sim_data.pca.svg
 
 Contribute
 ----------
