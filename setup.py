@@ -1,5 +1,5 @@
 '''
-setup for |project_name|
+setup for stats_utils
 
 Python packaging can become a nightmare, check the following for reference:
 For example on setting a Python package, see:
