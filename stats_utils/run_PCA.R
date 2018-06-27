@@ -40,7 +40,7 @@ Options:
 Input:
 
 A tab separated file. This is read with data.table and stringsAsFactors = FALSE
-Rows must be features (phenotypes) and columns must be samples (individuals)
+Rows must be samples (individuals) and columns must be features (phenotypes).
 The first row and first column must be the ID labels.
 PCA is run using prcomp, data is scaled and centred.
 
@@ -147,7 +147,7 @@ source(file.path(Rscripts_dir, 'ggtheme.R'))
 if (is.null(args[['-I']]) == FALSE) {
   input_name <- as.character(args[['-I']])
   # For tests:
-  # setwd('~/Documents/quickstart_projects/chronic_inflammation_Airwave.p_q/results/QTL_core_illumina')
+  # setwd('~/Documents/quickstart_projects/chronic_inflammation_Airwave.p_q/results/QTL_core_illumina_AIRWAVE_1DNMR_BatchCorrected_log/')
   # input_name <- 'AIRWAVE_1DNMR_BatchCorrected_log_Data_Var_Sample.tsv'
   input_data <- fread(input_name, sep = '\t', header = TRUE, stringsAsFactors = FALSE,
                       na.strings = c('', ' ', 'NA', 'NaN'))
@@ -193,7 +193,7 @@ dim(input_data) # nrow(), ncol()
 # tables()
 # colnames(input_data)
 # First column with feature labels:
-# input_data[, 1, with = FALSE] # by column position, preferable by column name to avoid silent bugs
+# input_data[, 1:5, with = FALSE] # by column position, preferable by column name to avoid silent bugs
 ##########
 
 ##########
