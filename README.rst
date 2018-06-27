@@ -73,12 +73,16 @@ To use
     # Simulate some data:
     simulate_cont_var.py -h
     simulate_cont_var.py --createDF --sample-size=1000 --var-size=50 -O cont_var_sim_data
-    # Run principal components on it:
+    # The file will have rows as features/variables and columns as
+    # samples/individuals. Transpose it for prcomp in run_PCA:
+    transpose.R -I cont_var_sim_data.tsv
+    # Run principal components:
     run_PCA.R -h
-    run_PCA.R -I cont_var_sim_data.tsv
+    run_PCA.R -I cont_var_sim_data.transposed.tsv
     # Check the outputs: 
-    head cont_var_sim_data.tsv | cut -f1-5
-    open top_10_PCs_cont_var_sim_data.pca.svg
+    head cont_var_sim_data* | cut -f1-5
+    open top_10_PCs_cont_var_sim_data.transposed.pca.svg
+
 
 Contribute
 ----------
