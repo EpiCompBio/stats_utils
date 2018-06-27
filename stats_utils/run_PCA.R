@@ -94,7 +94,7 @@ str(args)
 # (ie where this script lives). Useful when using source('some_script.R')
 # without having to pre-specify the location of where that script is.
 # This is directly take from:
-# How to source another_file.R from within your R script · molgenis/molgenis-pipelines Wiki
+# How to source another_file.R from within your R script molgenis/molgenis-pipelines Wiki
 # https://github.com/molgenis/molgenis-pipelines/wiki/How-to-source-another_file.R-from-within-your-R-script
 LocationOfThisScript = function() # Function LocationOfThisScript returns the location of this .R script (may be needed to source other files in same dir)
 {
@@ -341,7 +341,7 @@ cow_grid <- plot_grid(plot_prop_vars,
                       ncol=2)
 # Save figure to disk as svg:
 plot_name <- sprintf('top_%s_PCs_%s.svg', num_PCs, output_file_name)
-# A4 paper measures 210 × 297 millimeters or 8.27 × 11.69 inches
+# A4 paper measures 210x297 millimeters or 8.27x11.69 inches
 svg(plot_name, width = 12, height = 12)
 cow_grid
 dev.off()

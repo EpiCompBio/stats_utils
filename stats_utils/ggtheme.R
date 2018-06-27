@@ -7,7 +7,7 @@
 # If re-using functions it is much better to copy this to a new script and run here as:
 # source('my_ggplot_theme.R')
 
-# A4 paper measures 210 × 297 millimeters or 8.27 × 11.69 inches
+# A4 paper measures 210x297 millimeters or 8.27x11.69 inches
 ######################
 
 ######################
