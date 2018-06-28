@@ -4,7 +4,7 @@ library(data.table)
 ##########
 
 ##########
-"The program takes a list of p-values and computes their estimated π0 - the proportion of 
+"The program takes a list of p-values and computes their estimated pi0 - the proportion of 
 features that are truly null - based on their distribution (the assumption used is that p-values of 
 truly alternative cases tend to be close to zero, while p-values of null features will be uniformly 
 distributed among [0,1])."
@@ -40,9 +40,9 @@ qobj_1$pi0
 ##########
 
 ##########
-"The quantity π1 = 1−π0 estimates the lower bound of the proportion of truly 
+"The quantity pi1 = 1-pi0 estimates the lower bound of the proportion of truly 
 alternative features, i.e. the proportion of true positives (TP). 
-Replication and sharing between two samples is reported as the proportion of TP (π1) estimated 
+Replication and sharing between two samples is reported as the proportion of TP (pi1) estimated 
 from the p-value distribution of independent eQTLs discovered in sample 1 in the second sample 
 (exact SNP-probe combinations are tested)."
 

@@ -23,7 +23,7 @@
     # Normality: For fixed values of the independent variables, the dependent variable is normally distributed.
     # Independence: The Yi values are independent of each other.
     # Linearity: The dependent variable is linearly related to the independent variables.
-    # Homoscedasticity: The variance of the dependent variable doesn’t vary with the levels of the independent variables (constant variance).
+    # Homoscedasticity: The variance of the dependent variable doesn't vary with the levels of the independent variables (constant variance).
   # Compare models
   # Exclude outliers, transform data, re-fit models.
   # Model interpretation
@@ -306,7 +306,7 @@ outlierTest(fit)
 
 # High leverage values:
   # "Observations that have high leverage are outliers with regard to the other predictors.
-  # They have an unusual combination of predictor values. The response value isn’t involved in determining leverage.
+  # They have an unusual combination of predictor values. The response value isn t involved in determining leverage.
   # An observation with a hat value greater than 2 or 3 times the average hat value should be examined."
   # Use hat statistic to identify high leverage values (R in Action p.201):
 hat.plot <- function(fit) {
@@ -319,7 +319,7 @@ hat.plot <- function(fit) {
 hat.plot(fit)
 
 # Identify influential observations:
-  # Use Cook’s distance (or D statistic), where values greater than 4/(n-k-1), 
+  # Use Cook s distance (or D statistic), where values greater than 4/(n-k-1), 
   # where n = sample size, k = number of predictor variables, indicate influential observations. 
   # An alternative cut-off of 1 may be more useful and less sensitive.
 cutoff <- 4/(nrow(states)-length(fit$coefficients)-2)
@@ -328,7 +328,7 @@ abline(h=cutoff, lty=2, col="red")
 
 # Determine how influential observations affect the model:
 # Use added variable plots: 
-# For one response variable and k predictor variables, you’d create k added-variable plots:
+# For one response variable and k predictor variables, you d create k added-variable plots:
 # For each predictor Xk , plot the residuals from regressing the response variable on the other k-1 predictors versus 
 # the residuals from regressing Xk on the other k-1 predictors. 
 avPlots(fit, ask = FALSE, onepage = TRUE, id.method = "identify")
@@ -336,9 +336,9 @@ avPlots(fit, ask = FALSE, onepage = TRUE, id.method = "identify")
 
 # Combine the information from outlier, leverage, and influence plots:
 influencePlot(fit, id.method="identify", main="Influence Plot",
-              sub="Circle size is proportional to Cook’s distance")
+              sub="Circle size is proportional to Cook's distance")
 # Plot legend:
-# Influence plot. Elements above +2 or below –2 on the vertical axis are considered outliers. 
+# Influence plot. Elements above +2 or below -2 on the vertical axis are considered outliers. 
 # Elements above 0.2 or 0.3 on the horizontal axis have high leverage. 
 # Circle size is proportional to influence. O
 # Observations depicted by large circles may have disproportionate influence on the parameters estimates of the model.
