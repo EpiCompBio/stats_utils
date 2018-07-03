@@ -36,11 +36,11 @@ Options:
   --header <boolean>              Specify whether file has column names [default: TRUE]
 
 Input:
- An Excel file that will be read with the R gdata package.
+ An Excel file that will be read with the R readxl package.
   Specify sheet number and presence of column names if needed.
 
 Output:
-  Tab separated file.
+  Tab separated file. The suffix .tsv is added to the output file name.
 
 Requirements:
 
