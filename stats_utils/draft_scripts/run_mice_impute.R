@@ -11,9 +11,12 @@ Release: |version|
 Date: |today|
 
 Purpose
-=======
+========
 
 This is a wrapper for the R package mice for multiple imputation.
+See:
+https://cran.r-project.org/web/packages/mice/index.html
+https://stefvanbuuren.name/fimd/
 
 
 Usage and options
@@ -27,23 +30,52 @@ Usage: run_mice_impute.R (-I <INPUT_FILE>)
 			 run_mice_impute.R [options]
 			 run_mice_impute.R [-h | --help]
 
-TO DO: add options:
 Options:
 -I <INPUT_FILE>                 Input file name
 -O <OUTPUT_FILE>                Output file name
---session=<R_SESSION_NAME>      R session name if to be saved
+--session=<R_SESSION_NAME>      R session name if to be saved. [default: FALSE]
 -h --help                       Show this screen
--var                            some numeric argument [default: 0.001].
+--ID_col <int>                  Column with ID values for rows. [default: 1]
+--vars_interest <FILE_VARS>     Variables of interest for sanity checking
+--num_cores <int>               Number of cores to use for parallelising.
+--derived_vars <FILE_EXCLUDE>   Derived variables to exclude from imputation
+--missingness_cut <int>         Percent of missigness to exclude. [default: 30]
+--mincor <num>                  Minimum correlation for quickpred. [default: 0.3]
+--seed <int>                    Random seed number for reproducible analysis. [default: 123456]
+-m <int>                        Number of imputed datasets. [default: 5]
+--maxit <int>                   Number of iterations per dataset to impute. [default: 30]
+--pred <FILENAME>               Predictor matrix to determines relationship between variables
+
 
 Input:
 
-A tab separated file with headers. This is read with data.table and stringsAsFactors = FALSE
+Input file: A tab separated file with headers. This is usually a phenotype file with individuals (samples)
+as rows and phenotype information (age, gender, etc.) as columns.
+The file is read with data.table and stringsAsFactors = FALSE
 A per column and per row cleaned data frame is expected with the first column as the IDs.
-The missingness percentage is for information purposes only.
+
+Variables of interest: A tab separated file with no header containing one column with variable names per row is
+required. Variable names must match the column names in the input file.
+The first variable will be used as the main variable of interest. Several plots
+and diagnostic tests are performed using these.
+
+Derived variables: (optional) a file in the same format as --vars_interest with
+variable names that are derived, not needed for imputation and which should be excluded
+from this step (an re-calculated manually afterwards). See below for more information.
+
+--missingness_cut is used for information purposes only, no action is taken. You should
+clean per row and per column first. The value passed is used for both rows and columns.
+
 
 Output:
 
-  TO DO
+  A tab separated file with headers with the first imputed dataset.
+  A tab separated file with headers in the long format with all imputed datasets. This
+can then be read back into R and converted to a mids object with as.mids().
+  With --session, an Rdata object that contains all the imputed (mids object) datasets,
+this can then be re-loaded into R and ran in pooled analysis (slow). The session only saves
+the imputed object.
+  Several diagnostic plots (convergence, strip plots, bwplots, density plots).
 
 Notes:
 
@@ -109,7 +141,7 @@ information useful to impute other variables), pass it in the derived_vars optio
 this will be excluded for the imputation procedure.
 Once this is done, use the output from this script and run:
 
-(this is straight from https://stefvanbuuren.name/fimd/sec-knowledge.html):
+(this is from https://stefvanbuuren.name/fimd/sec-knowledge.html):
 data <- boys[, c("age", "hgt", "wgt", "hc", "reg")]
 imp <- mice(data, print = FALSE, seed = 71712)
 long <- mice::complete(imp, "long", include = TRUE)
@@ -121,17 +153,16 @@ according to your needs.
 
 If you are planning to carry out a model which includes interactions,
 non-linear effects of variables or Cox proportional hazards model (which is
-non-linear) for a censored time to event outcome, this script and the MICE
-approach used here will not be appropriate as the imputation model and the
-subsequent analysis model will be incompatible.
+non-linear), this script and the MICE approach used here will not be appropriate
+as the imputation model and the subsequent analysis model will be incompatible.
 In this case you may need to use the SMC-FCS approach. See:
 https://cran.r-project.org/web/packages/smcfcs/vignettes/smcfcs-vignette.html
 
 # Saving the imputed R object
 
 You can save the imputed object (the result of mice()) with --session
-This may be slow though.
-Once you have imputed you can run pooled analyses using the multiple imputed datasets.
+This may be slow though but required in order to run pooled analyses
+using the multiple imputed datasets.
 
 
 Documentation
@@ -207,6 +238,7 @@ str(args)
 
 # Suggestions on how to carry out imputation:
 # https://stefvanbuuren.name/fimd/conclusion-5.html
+# https://stats.stackexchange.com/questions/219013/how-do-the-number-of-imputations-the-maximum-iterations-affect-accuracy-in-mul
 
 # Some notes:
 # Roughly one imputation per percent of incomplete data (White et al.,2011),
@@ -308,7 +340,7 @@ mincor <- as.numeric(args[['--mincor']]) # minimum correlation for quickpred
 # mincor <- 0.3
 
 # Random number seed for reproducible analysis:
-seed <- as.numeric(args[['--seed']])
+seed <- as.integer(args[['--seed']])
 # seed <- 123456
 
 # Number of imputed datasets, 5 is default, roughly 1 per percent missing
@@ -388,10 +420,8 @@ library(mice) # multiple imputation
 library(VIM) # visualise missingness
 # library(miceadds) # still needed after mice update?
 library(parallel) # run imputations with multiple cores
-# library(ggplot2)
 library(data.table)
 library(svglite) # prefer over base R svg()
-
 library(lattice) # for density plots
 
 # source functions from a different R script:
@@ -426,7 +456,12 @@ if (is.null(args[['-O']])) {
 	# Split infile name at the last '.':
 	input_name <- strsplit(input_name, "[.]\\s*(?=[^.]+$)", perl = TRUE)[[1]][1]
 	output_file_name <- sprintf('%s_%s.tsv', input_name, suffix)
+	print('Outfile with first complete imputed dataset will be named:')
 	print(output_file_name)
+	# Save a name also for the long format:
+	output_file_name_long <- sprintf('%s_%s_long.tsv', input_name, suffix)
+	print('Outfile with all imputed datasets in long format will be named:')
+	print(output_file_name_long)
 } else {
 	output_file_name <- as.character(args[['-O']])
 	# output_file_name <- 'testing'
@@ -743,8 +778,16 @@ imp_merged_comp <- complete(imp_merged, 1) # first imputed data set
 
 
 ######################
-# Save file:
+# Save files
+# First imputed dataset in broad format:
 fwrite(imp_merged_comp, output_file_name,
+			 sep = '\t', na = 'NA',
+			 col.names = TRUE, row.names = FALSE,
+			 quote = FALSE,
+			 nThread = num_cores # use all cores available to write out
+)
+# All imputed datasets in long format:
+fwrite(imp_merged, output_file_name_long,
 			 sep = '\t', na = 'NA',
 			 col.names = TRUE, row.names = FALSE,
 			 quote = FALSE,
@@ -764,9 +807,11 @@ objects_to_save <- c('imp_merged') # needs to be a character vector for save()
 # Filename to save current R session, data and objects at the end:
 if (is.null(args[['--session']]) == FALSE) {
 	save_session <- as.character(args[['--session']]) #args $ `--session`
-	R_session_saved_image <- sprintf('R_session_saved_image_%s.RData', save_session)
+	R_session_saved_image <- sprintf('%s.RData', save_session)
 	print(sprintf('Saving an R session image as: %s', R_session_saved_image))
 	save(list = objects_to_save, file = R_session_saved_image, compress = 'gzip')
+	# TO DO: check time to compress and if gzip is equivalent and faster:
+	save(list = objects_to_save, file = 'imputation_test.RData')
 } else {
 	print('Not saving an R session image, this is the default. Specify the --session option otherwise')
 }
