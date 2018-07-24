@@ -18,22 +18,24 @@ See:
 https://cran.r-project.org/web/packages/mice/index.html
 https://stefvanbuuren.name/fimd/
 
+Beware not all options have been tested so please raise an issue if you have any problems.
 
 Usage and options
 =================
 
-
 To run, type:
-  Rscript run_mice_impute.R -I <INPUT_FILE> [options]
+  Rscript run_mice_impute.R -I <INPUT_FILE> --vars_interest <FILE_VARS> [options]
 
-Usage: run_mice_impute.R (-I <INPUT_FILE>)
+Usage: run_mice_impute.R (-I <INPUT_FILE>) (--vars_interest <FILE_VARS>)
+       run_mice_impute.R (--dry-run)
+       run_mice_impute.R (--extend <FILE_LONG>)
 			 run_mice_impute.R [options]
 			 run_mice_impute.R [-h | --help]
 
 Options:
 -I <INPUT_FILE>                 Input file name
 -O <OUTPUT_FILE>                Output file name
---session=<R_SESSION_NAME>      R session name if to be saved. [default: FALSE]
+--session <R_SESSION_NAME>      R session name if to be saved.
 -h --help                       Show this screen
 --ID_col <int>                  Column with ID values for rows. [default: 1]
 --vars_interest <FILE_VARS>     Variables of interest for sanity checking
@@ -45,7 +47,8 @@ Options:
 -m <int>                        Number of imputed datasets. [default: 5]
 --maxit <int>                   Number of iterations per dataset to impute. [default: 30]
 --pred <FILENAME>               Predictor matrix to determines relationship between variables
-
+--dry-run                       Run a dry imputation (maxit = 0) to get the predictor matrix and methods. [default: FALSE]
+--extend <FILE_LONG>            Provide a file in long format (as output by complete()) to run further imputations.
 
 Input:
 
@@ -55,7 +58,7 @@ The file is read with data.table and stringsAsFactors = FALSE
 A per column and per row cleaned data frame is expected with the first column as the IDs.
 
 Variables of interest: A tab separated file with no header containing one column with variable names per row is
-required. Variable names must match the column names in the input file.
+required. Variable names must match the column names in the input file (and have NAs).
 The first variable will be used as the main variable of interest. Several plots
 and diagnostic tests are performed using these.
 
@@ -240,6 +243,9 @@ str(args)
 # https://stefvanbuuren.name/fimd/conclusion-5.html
 # https://stats.stackexchange.com/questions/219013/how-do-the-number-of-imputations-the-maximum-iterations-affect-accuracy-in-mul
 
+# An example of how to create a predictor matrix and modify it:
+# https://rpubs.com/kaz_yos/mice-exclude
+
 # Some notes:
 # Roughly one imputation per percent of incomplete data (White et al.,2011),
 # but the more the better, 100 can easily be run on small datasets on a laptop
@@ -269,110 +275,6 @@ str(args)
 # (for eg interaction term or a quadratic), otherwise imputation may be biased (von Hippel, 2009)
 # Also probably best not to remove outliers at all
 ##########
-
-##########
-# TO DO:
-# Legends and methods output
-# Report (box 2 in https://www.bmj.com/content/338/bmj.b2393):
-# Amount of missing data:
-# number of missing values for each variable
-# number of cases with complete data for each important component of the analysis.
-# Give reasons for missing values if possible
-# indicate how many individuals were excluded because of missing data when
-# reporting the flow of participants through the study.
-# If possible, describe reasons for missing data in terms of other variables
-# (rather than just reporting a universal reason such as treatment failure)
-
-# Comparison of distribution of key variables in individuals
-# with and without missing data
-# Provide imputed and non-imputed datasets
-# Plausibility of the missing at random assumption (discussion and sensitivity analysis)
-# For sensitivity analysis example see:
-# https://gerkovink.github.io/miceVignettes/Sensitivity_analysis/Sensitivity_analysis.html
-
-# full report of imputation method including:
-# assumptions of method
-# software used and of key settings
-# number of imputed datasets created
-# variables were included in the imputation procedure
-# treatment of non-normally distributed and binary/categorical variables
-# Were statistical interactions also included in imputation models?
-# Provide results from analyses restricted to complete cases
-# Consider that complete cases analysis may be biased and multiple imputation
-# could correct biases (if missing at random).
-# investigate the robustness of key inferences to possible departures
-# from the missing at random assumption by assuming a range of missing
-# not at random mechanisms in sensitivity analyses. See the ampute package for this.
-##########
-######################
-
-######################
-# args:
-
-num_cores <- as.integer(args[['--num_cores']])
-
-# set rownames and exclude from imputation calcs:
-ID_col <- as.integer(args[['--ID_col']])
-# ID_col <- 1
-
-# pass a few variables of interest for sanity checking:
-vars_interest <- as.character(args[['--vars_interest']])
-# vars_interest <- c('age', 'hyp')
-print(sprintf('Variables of interest are: %s', vars_interest))
-# The first var will be the var of interest:
-main_var <- vars_interest[[1]]
-# main_var <- 'bmi'
-print(sprintf('The main variable of interest is: %s', main_var))
-
-# variables such as BMI which should be excluded from the imputation
-# procedure if not needed for imputation and recalculated afterwards:
-derived_vars <- as.character(args[['--derived_vars']])
-# derived_vars <- c('bmi')
-print(sprintf('Derived variables to exclude from imputation are: %s', derived_vars))
-
-# Percent of missigness to report (for information only, no action is done):
-# Run the per col and per row cleaning script first
-missingness_cut <- as.integer(args[['--missingness_cut']])
-# missingness_cut <- 30
-
-# for mice():
-mincor <- as.numeric(args[['--mincor']]) # minimum correlation for quickpred
-# mincor <- 0.3
-
-# Random number seed for reproducible analysis:
-seed <- as.integer(args[['--seed']])
-# seed <- 123456
-
-# Number of imputed datasets, 5 is default, roughly 1 per percent missing
-m <- as.integer(args[['-m']])
-# m <- 5
-
-# number of iterations per dataset to impute
-maxit <- as.integer(args[['--maxit']])
-# maxit <- 30
-
-# Provide a predictor matrix that determines the relationship between variables
-# that will be used for imputation:
-pred <- as.character(args[['--pred']])
-# initial imputation
-# to show predictor matrix and methods chosen:
-# ini <- mice(input_data, maxit = 0, print = F)
-# ini$pred
-# to remove a predictor do eg
-# pred[ ,"hyp"] <- 0
-# object is matrix nested in list
-
-# Provide a methods list to use if not the default:
-# TO DO: leave for later and rely on default choices:
-# meth <- as.character(args[['--meth']])
-# Methods:
-# overview of the methods in mice can be found by
-# methods(mice)
-# ini <- mice(nhanes2, maxit = 0)
-# ini$meth
-# Change as eg:
-# meth["bmi"] <- "norm"
-# object is a list
 ######################
 
 ######################
@@ -418,10 +320,9 @@ Rscripts_dir
 # Import libraries
 library(mice) # multiple imputation
 library(VIM) # visualise missingness
-# library(miceadds) # still needed after mice update?
 library(parallel) # run imputations with multiple cores
-library(data.table)
-library(svglite) # prefer over base R svg()
+library(data.table) # data manipulation and fast reading and writing
+library(svglite) # prefer over base R's svg()
 library(lattice) # for density plots
 
 # source functions from a different R script:
@@ -433,9 +334,7 @@ source(file.path(Rscripts_dir, 'ggtheme.R')) #, chdir = TRUE)
 # Read files, this is with data.table:
 if (is.null(args[['-I']]) == FALSE) {
 	input_name <- as.character(args[['-I']])
-	# For tests:
-	# input_name <- 'XXX'
-	# setwd('~/xxxx/')
+	# input_name <- 'nhanes.tsv'
 	input_data <- fread(input_name, sep = '\t', header = TRUE, stringsAsFactors = FALSE)
 } else {
 	# Stop if arguments not given:
@@ -469,21 +368,181 @@ if (is.null(args[['-O']])) {
 	print(sprintf('Output file names: %s', output_file_name))
 }
 ##########
-######################
 
-######################
+##########
+# Pass a few variables of interest for sanity checking:
+if (is.null(args[['--vars_interest']]) == FALSE) {
+	vars_interest <- as.character(args[['--vars_interest']])
+	# vars_interest <- c('age', 'hyp')
+	# vars_interest <- 'vars_interest.tsv'
+	vars_interest <- fread(vars_interest,
+												 sep = '\t',
+												 header = FALSE,
+												 stringsAsFactors = FALSE)
+	vars_interest <- as.character(vars_interest[, V1])
+} else {
+	# Stop if arguments not given:
+	print('You need to provide a file with some variables of interest to test.')
+	stopifnot(!is.null(args[['--vars_interest']]) == TRUE)
+}
+print('Variables of interest:')
+print(vars_interest)
+
+# The first var will be the var of interest:
+main_var <- vars_interest[[1]]
+# main_var <- 'bmi'
+print(sprintf('The main variable of interest is: %s', main_var))
+##########
+
+##########
+# variables such as BMI which should be excluded from the imputation
+# procedure if not needed for imputation and recalculated afterwards:
+if (is.null(args[['--derived_vars']]) == FALSE) {
+	derived_vars <- as.character(args[['--derived_vars']])
+	# derived_vars <- c('bmi')
+	# derived_vars <- 'derived_vars.tsv'
+	derived_vars <- fread(derived_vars,
+												 sep = '\t',
+												 header = FALSE,
+												 stringsAsFactors = FALSE)
+	derived_vars <- as.character(derived_vars[, V1])
+	print(sprintf('Derived variables to exclude from imputation: %s', derived_vars))
+	# Exclude from dataset provided:
+	input_data <- input_data[, -c(derived_vars), with = FALSE]
+} else {
+	print('Derived variables not provided, using all columns for imputation.
+				')
+}
+##########
+
+##########
+# Create a run dry in order to print out correlation matrix and methods chosen:
+
+# Get mincor first:
+mincor <- as.numeric(args[['--mincor']]) # minimum correlation for quickpred
+# mincor <- 0.3
+
+if (is.null(args[['--dry-run']]) == FALSE) {
+	print('Running a dry imputation to get methods and predictor matrix.')
+	dry_mice <- mice(input_data, maxit = 0, print = F)
+	# Save predictor matrix:
+	# dry_mice$pred
+	# to remove a predictor do eg
+	# pred[ ,"hyp"] <- 0
+	# object is matrix nested in list?
+	fwrite(dry_mice$pred,
+				 sprintf('predictor_matrix_%s', output_file_name),
+				 sep = '\t',
+				 na = 'NA',
+				 col.names = TRUE,
+				 row.names = TRUE,
+				 quote = FALSE
+				 )
+	# Save methods:
+	# overview of the methods in mice can be found by
+	# methods(mice)
+	# dry_mice$meth
+	# Change as eg:
+	# meth["bmi"] <- "norm"
+	# object is a list
+	fwrite(dry_mice$meth,
+				 sprintf('methods_%s', output_file_name),
+				 sep = '\t',
+				 na = 'NA',
+				 col.names = TRUE,
+				 row.names = TRUE,
+				 quote = FALSE
+	)
+	# And quit after this:
+	print('Dry run finished, exiting.')
+	sessionInfo()
+	q()
+	}
+##########
+
+##########
+# Set method and predictor matrix if provided
+# Provide a predictor matrix that determines the relationship between variables
+# that will be used for imputation:
+if (is.null(args[['--pred']]) == FALSE) {
+	pred_name <- as.character(args[['--pred']])
+	# pred <- 'pred.tsv'
+	pred <- fread(pred_name,
+								sep = '\t',
+								header = TRUE,
+								stringsAsFactors = FALSE)
+	print(sprintf('Predictor matrix provided, using this instead of mice pred: %s',
+								pred_name)
+				)
+} else {
+	pred <- quickpred(input_data, mincor = mincor)
+	print(sprintf('Predictor matrix not provided, using
+								 mice defaults with quickpred and %s
+								for minimum correlation between variables.', mincor)
+	)
+	}
+
+# Provide a methods list to use if not the default:
+if (is.null(args[['--meth']]) == FALSE) {
+	meth_name <- as.character(args[['--meth']])
+	meth <- fread(meth_name,
+								sep = '\t',
+								header = TRUE,
+								stringsAsFactors = FALSE)
+	print(sprintf('Methods provided, using this instead of mice defaults: %s',
+								meth_name)
+				)
+	meth <- as.character(meth[, V1])
+} else {
+	meth <- NULL # TO DO: Check this passes OK
+	print('Methods not provided, using mice defaults')
+	}
+##########
+
+##########
+# Further arguments:
+num_cores <- as.integer(args[['--num_cores']])
+
+# set rownames and exclude from imputation calcs:
+ID_col <- as.integer(args[['--ID_col']])
+# ID_col <- 1
+
+# Percent of missigness to report (for information only, no action is done):
+# Run the per col and per row cleaning script first
+missingness_cut <- as.integer(args[['--missingness_cut']])
+# missingness_cut <- 30
+
+# for mice():
+# Random number seed for reproducible analysis:
+seed <- as.integer(args[['--seed']])
+# seed <- 123456
+
+# Number of imputed datasets, 5 is default, roughly 1 per percent missing
+m <- as.integer(args[['-m']])
+# m <- 5
+
+# number of iterations per dataset to impute
+maxit <- as.integer(args[['--maxit']])
+# maxit <- 30
+##########
+
+##########
 # Set a seed for reproducible analysis:
 set.seed(seed = seed)
 
 # Set-up multiple cores if needed
-# Using all cores can slow down the computer, leave one free
-# TO DO: pass num_cores
-# if num_cores then num_cores = num_cores
-# else
-num_cores <- max(1, detectCores() - 1)
-# Get multiple copies of R running and communicating:
-# TO DO: check if FORK is OK for most situations:
-cl <- makeCluster(num_cores, type = "FORK") # PSOCK is default but needs env vars passed
+if (is.null(args[['--num_cores']]) == FALSE) {
+	num_cores <- as.integer(args[['--num_cores']])
+	print(sprintf('Number of cores provided, using: %s', num_cores))
+} else {
+	# Using all cores can slow down the computer, leave one free:
+	num_cores <- max(1, detectCores() - 1)
+	print(sprintf('Number of cores not provided, using: %s', num_cores))
+}
+
+# Setup the cluster
+# FORK runs only in Unix like, PSOCK is default but needs env vars passed to each core
+cl <- makeCluster(num_cores, type = "FORK")
 # Pass a seed:
 clusterSetRNGStream(cl, iseed = seed)
 # Use the following if PSOCK is needed:
@@ -492,102 +551,104 @@ clusterSetRNGStream(cl, iseed = seed)
 # clusterEvalQ(cl, library(mice)) # export all libraries needed
 # At the end run stopCluster(cl)
 # run gc() and rm() if needed # only gc() for garbage collection
+##########
 ######################
 
 ######################
-# Set method and predictor matrix if provided:
-# TO DO:
-# if meth given
-# meth = meth
-# else meth = NULL
+# Inspect data
 
-# if pred given
-# pred = pred
-# else
-pred <- quickpred(input_data, mincor = mincor)
+# Only run if -I given but without --extend:
+# TO DO: ugly, should turn to functions, leave as is for now
+if (is.null(args[['-I']]) == FALSE &
+		!is.null(args[['--extend']]) == FALSE ) {
 
-# if vars_interest
-# read in vars_interest
-# else use columns 2-5 assuming column 1 has IDs or pass
-# and the first var = main_var
-# with all being = vars_interest
+	input_data <- as.data.frame(input_data)
+	# summary(input_data)
+	# dim(input_data)
 
-# if derived_vars
-# read in derived_vars
-# exclude from data to impute
-# include after imputation
-# calculate derived var from imputed data
-# else pass
-# derived_vars = variables such as BMI which should be excluded from the imputation
-# procedure but then recalculated afterwards.
+	# Inspect the missing data pattern:
+	svg('missingness_pattern.svg')
+	missingness <- md.pattern(input_data, plot = TRUE)
+	missingness
+	dev.off()
+	# TO DO: print out legend
+	# TO DO: save as table with caption
+	# each row corresponds to a missing data pattern (1=observed, 0=missing).
+	# Rows and columns are sorted in increasing amounts of missing information.
+	# The last column and row contain row and column counts, respectively.
+	# lower right corner = total missing data points
+	# last row shows total missing values for each variable
+	# last column (no header) shows number of missing variables
+	# first column (no header) x observations with y vars missing
+
+	# Check proportion of missing data:
+	prop_NA <- function(x) {sum(is.na(x)) / length(x) * 100}
+	# Individuals with more than X% of missing variables:
+	rows_missing <- apply(input_data, 1, prop_NA) # by rows
+	rows_above_cut <- nrow(input_data[which(rows_missing > missingness_cut), ])
+	print(sprintf('Number of rows with >%s%% missing data: %s', missingness_cut, rows_above_cut))
+	# By columns:
+	cols_missing <- apply(input_data, 2, prop_NA)
+	cols_above_cut <- ncol(input_data[, which(cols_missing > missingness_cut)])
+	print(sprintf('Number of columns with >%s%% missing data: %s', missingness_cut, cols_above_cut))
+
+	# See pattern using VIM and mice libraries
+	# Plot missing values:
+	svg('missingness_vars_interest_VIM.svg')
+	# TO DO: save legend
+	aggr_plot <- aggr(input_data[, vars_interest],
+										only.miss = TRUE, # Plot only missing variables
+										col = c('lightgrey', 'red'), # 1 colour for missing data, 2 observed, 3 imputed
+										numbers = T,
+										sortVars = T,
+										labels = names(input_data[, vars_interest]),
+										cex.axis = 0.4,
+										gap = 2,
+										ylab = c('Proportion of missing data', 'Pattern')
+										)
+	dev.off()
+}
 ######################
-
-######################
-# Load the data and inspect
-# For testing:
-# input_name <- 'nhanes' # use nhanes and nhanes2 as examples
-# data(list = input_name)
-# input_data <- nhanes
-
-input_data <- as.data.frame(input_data)
-# summary(input_data)
-# dim(input_data)
-
-# Inspect the missing data pattern
-svg('missingness_pattern.svg')
-missingness <- md.pattern(input_data, plot = TRUE)
-missingness
-dev.off()
-# TO DO: print out legend
-# TO DO: save as table with caption
-# each row corresponds to a missing data pattern (1=observed, 0=missing).
-# Rows and columns are sorted in increasing amounts of missing information.
-# The last column and row contain row and column counts, respectively.
-# lower right corner = total missing data points
-# last row shows total missing values for each variable
-# last column (no header) shows number of missing variables
-# first column (no header) x observations with y vars missing
-
-# Check proportion of missing data:
-prop_NA <- function(x) {sum(is.na(x)) / length(x) * 100}
-# Individuals with more than X% of missing variables:
-rows_missing <- apply(input_data, 1, prop_NA) # by rows
-rows_above_cut <- nrow(input_data[which(rows_missing > missingness_cut), ])
-print(sprintf('Number of rows with >%s%% missing data: %s', missingness_cut, rows_above_cut))
-# By columns:
-cols_missing <- apply(input_data, 2, prop_NA)
-cols_above_cut <- ncol(input_data[, which(cols_missing > missingness_cut)])
-print(sprintf('Number of columns with >%s%% missing data: %s', missingness_cut, cols_above_cut))
-
-# See pattern using VIM and mice libraries
-# Plot missing values:
-svg('missingness_vars_interest_VIM.svg')
-# TO DO:
-# if vars_interest plot vars_interest, else plot all
-# save legend
-aggr_plot <- aggr(input_data[, vars_interest],
-									only.miss = TRUE, # Plot only missing variables
-									col = c('lightgrey', 'red'), # 1 colour for missing data, 2 observed, 3 imputed
-									numbers = T,
-									sortVars = T,
-									labels = names(input_data[, vars_interest]),
-									cex.axis = 0.4,
-									gap = 2,
-									ylab = c('Proportion of missing data', 'Pattern')
-									)
-dev.off()
-######################
-
 
 ######################
 # Impute missing data with multiple cores
+
+##########
 # Keep samples IDs but exclude them from imputation (non missing and
 # would be used to estimate imputation if left as column).
-# Check this works as expected with output:
-rownames(input_data) <- input_data[[ID_col]]
-input_data <- input_data[, -ID_col]
-head(input_data)
+# Only run if -I given but without --extend
+# TO DO: ugly, should turn to functions, leave as is for now
+if (is.null(args[['-I']]) == FALSE &
+		!is.null(args[['--extend']]) == FALSE ) {
+	# When writing out, the long format has .id, as character, corresponding to the row names
+	# row names are also saved to the dataframes with fwrite at the end.
+	rownames(input_data) <- input_data[[ID_col]]
+	input_data <- input_data[, -c(ID_col)]
+	head(input_data)
+}
+##########
 
+##########
+# TO DO: needs to coordinate with -I and then pass to parLapply
+# Extend the number of iterations
+# Run as above but after passing the appropriate long file and converted with as.mids()
+if (is.null(args[['-I']]) == FALSE & # if both arguments are given run
+		is.null(args[['--extend']]) == FALSE ) {
+	input_name <- as.character(args[['-I']])
+	# input_name <- 'nhanes_long_imputed.tsv'
+	input_data <- fread(input_name, sep = '\t', header = TRUE, stringsAsFactors = FALSE)
+	print('File being used to extend imputations: ')
+	print(input_name)
+	input_data <- as.mids(input_data)
+} else {
+  print('Long format file for imputation extension not provided.
+         You need to provide an input file for extensions of imputation.
+				 This has to be the long format from mice::complete().')
+	stopifnot(!is.null(args[['--extend']]) == TRUE)
+}
+##########
+
+##########
 # Run imputation
 # The following will yield num_cores * m imputed datasets
 # which will be contained in imp_pars as a list object
@@ -595,24 +656,45 @@ head(input_data)
 # a mids object, where imp_pars[[1]][1] is data,
 # imp_pars[[1]][2] contains the imputed data for each variable, etc.
 # mice::ibind merges and attributes it as class mids below
-imp_pars <-
-	parLapply(cl = cl,
-						X = 1:num_cores,
-						fun = function(no) {
-							mice(input_data,
-									 m = m, # Number of imputed datasets, 5 is default
-									 maxit = maxit, # max iterations per imputation
-									 # quickpred = set the minimum correlation for variable
-									 # selection in the predictor matrix:
-									 pred = pred,
-									 print = F, # omit printing of the iteration cycle
-									 diagnostics = TRUE,
-									 # meth = 'pmm', # predictive mean matching, leave empty for
-				                           # auto selection depending on variable type
-				           seed = seed
-									 )
-							}
-						)
+
+# TO DO: check adding extension works OK, when parallelising and with ibind()
+# Only run if -I given but without --extend
+# TO DO: ugly, should turn to functions, leave as is for now
+if (is.null(args[['-I']]) == FALSE &
+		!is.null(args[['--extend']]) == FALSE ) {
+  imp_pars <-
+		parLapply(cl = cl,
+							X = 1:num_cores,
+							fun = function(no) {
+								mice(input_data,
+										 m = m, # Number of imputed datasets, 5 is default
+										 maxit = maxit, # max iterations per imputation
+										 # quickpred = set the minimum correlation for variable
+										 # selection in the predictor matrix:
+										 pred = pred,
+										 print = F, # omit printing of the iteration cycle
+										 diagnostics = TRUE,
+										 # meth = 'pmm', # predictive mean matching, leave empty for
+					                           # auto selection depending on variable type
+					           seed = seed
+										 )
+								}
+							)
+} else if (is.null(args[['-I']]) == FALSE & # if both arguments are given run
+					 is.null(args[['--extend']]) == FALSE ) {
+	# imp_pars <- mice.mids(input_data, maxit = 35, print = F)
+	imp_pars <-
+		parLapply(cl = cl,
+							X = 1:num_cores,
+							fun = function(no) {
+								mice.mids(input_data,
+										 maxit = maxit, # max iterations per imputation
+										 print = F # omit printing of the iteration cycle
+										 )
+								}
+							)
+	# plot(imp_pars)
+	}
 
 # Merge the datasets and create a mids object:
 imp_merged <- imp_pars[[1]]
@@ -620,10 +702,13 @@ for (n in 2:length(imp_pars)) {
 	imp_merged <- mice::ibind(imp_merged,
 											imp_pars[[n]])
 }
+##########
 
+##########
 # Free up the cores taken:
 stopCluster(cl)
 gc(verbose = TRUE) # Prob not necessary but ensure R returns memory to the OS
+##########
 ######################
 
 ######################
@@ -634,10 +719,42 @@ gc(verbose = TRUE) # Prob not necessary but ensure R returns memory to the OS
 # data set (class mids) and all information from the procedure including:
 # original data, imputed values, number of missing values,
 # number of iterations, etc.
+# TO DO: save to file as methods description:
 attributes(imp_merged)
 # imp_merged$data # original data
 # imp_merged$imp # imputed data
 imp_merged$meth # imputation method used, "" empty string means no NAs
+
+# Report (box 2 in https://www.bmj.com/content/338/bmj.b2393):
+# Amount of missing data:
+# number of missing values for each variable
+# number of cases with complete data for each important component of the analysis.
+# Give reasons for missing values if possible
+# indicate how many individuals were excluded because of missing data when
+# reporting the flow of participants through the study.
+# If possible, describe reasons for missing data in terms of other variables
+# (rather than just reporting a universal reason such as treatment failure)
+
+# Comparison of distribution of key variables in individuals
+# with and without missing data
+# Provide imputed and non-imputed datasets
+# Plausibility of the missing at random assumption (discussion and sensitivity analysis)
+# For sensitivity analysis example see:
+# https://gerkovink.github.io/miceVignettes/Sensitivity_analysis/Sensitivity_analysis.html
+
+# full report of imputation method including:
+# assumptions of method
+# software used and of key settings
+# number of imputed datasets created
+# variables were included in the imputation procedure
+# treatment of non-normally distributed and binary/categorical variables
+# Were statistical interactions also included in imputation models?
+# Provide results from analyses restricted to complete cases
+# Consider that complete cases analysis may be biased and multiple imputation
+# could correct biases (if missing at random).
+# investigate the robustness of key inferences to possible departures
+# from the missing at random assumption by assuming a range of missing
+# not at random mechanisms in sensitivity analyses. See the ampute package for this.
 ##########
 
 ##########
@@ -743,29 +860,9 @@ dev.off()
 # The only way to test the amount of missing data that is to test
 # imputed vs complete cases and see if the results change
 ##########
-
-######################
-# TO DO: needed?
-# Extend the number of iterations
-# five iterations works well in practice
-# can extend with mice.mids():
-# imp_extended <- mice.mids(imp_merged, maxit = 35, print = F)
-# plot(imp_extended)
 ######################
 
 ######################
-##########
-# Extract the completed data:
-imp_merged_comp <- complete(imp_merged, 1) # first imputed data set
-# complete() provides more options for exploring with include and action
-# for outputting both observed and imputed and long, broad, etc. formatted datasets
-# Sanity check the number of missing values, will error if complete though:
-# md.pattern(imp_merged_comp)
-
-# TO DO: save all datasets for regression with pooled data in eg --session.
-##########
-
-##########
 # TO DO: this would be manual:
 # # Sanity check observed and imputed data
 # # Variables used as predictors for imputation of each incomplete variable:
@@ -773,26 +870,39 @@ imp_merged_comp <- complete(imp_merged, 1) # first imputed data set
 # # Implausible results for specific variables:
 # which(imp_merged$imp$vitd12 <= 1 | imp_merged$imp$vitd12 >= 250)
 # which(imp_merged$imp$calendar_age_ra <= 60 | imp_merged$imp$calendar_age_ra >= 100)
-##########
 ######################
 
+######################
+# Extract the completed data:
+imp_merged_comp <- complete(imp_merged, 1) # first imputed data set
+# complete() provides more options for exploring with include and action
+# for outputting both observed and imputed and long, broad, etc. formatted datasets
+# Sanity check the number of missing values, will error if complete though:
+# md.pattern(imp_merged_comp)
+######################
 
 ######################
 # Save files
 # First imputed dataset in broad format:
 fwrite(imp_merged_comp, output_file_name,
-			 sep = '\t', na = 'NA',
-			 col.names = TRUE, row.names = FALSE,
+			 sep = '\t',
+			 na = 'NA',
+			 col.names = TRUE,
+			 row.names = TRUE, # keep as these are the ID column
 			 quote = FALSE,
 			 nThread = num_cores # use all cores available to write out
 )
 # All imputed datasets in long format:
 fwrite(imp_merged, output_file_name_long,
-			 sep = '\t', na = 'NA',
-			 col.names = TRUE, row.names = FALSE,
+			 sep = '\t',
+			 na = 'NA',
+			 col.names = TRUE,
+			 row.names = TRUE, # keep as these are the ID column
 			 quote = FALSE,
 			 nThread = num_cores # use all cores available to write out
 )
+
+gc()
 ######################
 
 ######################
