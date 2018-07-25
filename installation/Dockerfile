@@ -60,10 +60,10 @@ RUN apt-get install -qy \
 # Don't mix conda-forge and/or bioconda with defaults channel in R as packages
 # will conflict with other and fail
 # channels
-RUN conda config --add channels bioconda ; \
-    conda config --add channels conda-forge ; \
-    conda config --remove channels defaults ; \
-    conda config --remove channels r
+RUN conda config --add channels bioconda
+    && conda config --add channels conda-forge
+    && conda config --remove channels defaults
+    && conda config --remove channels r
 
 # Update conda:
 RUN conda update -y conda
@@ -75,19 +75,22 @@ RUN conda update -y conda
 ##########
 # Install all packages needed
 # Major packages:
-RUN conda install python=3.6 ; \
-    conda install -y r
+RUN conda install python=3.6
+    && conda install -y r=3.4
 
 # Install python packages:
-RUN pip install --upgrade pip numpy ; \
-    pip install cython ; \
-    pip install pandas
+RUN pip install --upgrade pip numpy
+    && pip install cython
+    && pip install pandas
 
 # Install project specific packages:
-RUN conda install -y r-docopt=0.4.5 r-data.table=1.10.4 r-ggplot2=2.2.1 r-ggthemes ; \
-    R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("cowplot", repos = "http://cran.us.r-project.org") ; library("cowplot")' ; \
-    R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("ggthemes", repos = "http://cran.us.r-project.org") ; library("ggthemes")' ; \
-#R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("bigpca", repos = "http://cran.us.r-project.org") ; library("bigpca")' ; \
+#RUN conda create -y -n stats_utils r=3.4
+RUN conda install -y r-mice r-docopt r-ggplot2 r-dplyr r-data.table r-caret r-lattice r-VIM r-ggthemes
+RUN R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("cowplot", repos = "http://cran.us.r-project.org") ; library("cowplot")' 
+RUN R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("svglite", repos = "http://cran.us.r-project.org") ; library("svglite")' 
+
+RUN R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("parallel", repos = "http://cran.us.r-project.org") ; library("parallel")'
+# Note parallel is a core R package, not on CRAN, and only needs to be loaded, as already installed with base R
 
 # Install rpy2 with conda as pip version causes conflicts:
 #RUN conda install -y rpy2
@@ -96,6 +99,7 @@ RUN conda install -y r-docopt=0.4.5 r-data.table=1.10.4 r-ggplot2=2.2.1 r-ggthem
 ##########
 # Install packages that aren't on pip or conda:
 
+# eg:
 # FlashPCA2 and dependencies:
 
 # Eigen: http://eigen.tuxfamily.org/index.php?title=Main_Page
@@ -106,38 +110,6 @@ RUN conda install -y r-docopt=0.4.5 r-data.table=1.10.4 r-ggplot2=2.2.1 r-ggthem
 #    tar xvfz 3.3.4.tar.gz \
 #    mv eigen-eigen-5a0156e40feb eigen ; \
 #    cd eigen ;
-
-# TO DO: Get full paths to specify for flashpca
-
-# Spectra: https://github.com/yixuan/spectra/
-#RUN cd ; \
-#    cd flashpca2 ; \
-#    wget https://github.com/yixuan/spectra/archive/v0.5.0.tar.gz ; \
-#    tar xvfz v0.5.0.tar.gz ; \
-#    mv spectra-0.5.0 spectra ; \
-#    cd spectra ;
-
-# Boost has a conda recipe:
-#RUN conda install -y boost
-
-# FlashPCA2: https://github.com/gabraham/flashpca/releases
-#RUN cd ; \
-#    cd flashpca2 ; \
-#    wget https://github.com/gabraham/flashpca/releases/download/v2.0/flashpca_2.0.tar.gz ; \
-#    tar xvfz flashpca_2.0.tar.gz ; \
-#    cd flashpca_2.0/ ; \
-#    make all EIGEN_INC=/XXXX/flashpca2/eigen \
-#    BOOST_INC=/XXXX/flashpca2/boost-1.59.0/include \
-#    BOOST_LIB=/XXXX/flashpca2/boost-1.59.0/lib \
-#    SPECTRA_INC=/XXXX/flashpca2/spectra
-
-# In a Mac e.g.: make all EIGEN_INC=/XXXX/flashpca2/eigen-eigen-5a0156e40feb \
-#                         BOOST_INC=/XXXX/anaconda/envs/r_test/include/boost \
-#                         BOOST_LIB=/XXXX/anaconda/envs/r_test/lib \
-#                         SPECTRA_INC=/XXXX/flashpca2/spectra-0.5.0/include
-
-
-
 ##########
 
 
