@@ -1,0 +1,1 @@
+Rscript run_mice_impute.R -I nhanes.tsv --vars-interest vars_interest.tsv --derived-vars derived_vars.tsv -O testing -m 10 --maxit 40 --num-cores 5 --mincor 0.2 --seed 25 --session --ID-col 1
