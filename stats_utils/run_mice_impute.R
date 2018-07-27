@@ -44,7 +44,7 @@ Options:
 --pred <FILENAME>               Predictor matrix to determine relationship between variables
 --meth <FILENAME>               Methods to use for imputation for each variable
 --dry-run                       Run a dry imputation (maxit = 0) to get the predictor matrix and methods
---extend                        Run further iterations (not in use)
+--extend                        Run further iterations (not implemented, use session instead)
 
 
 Input
