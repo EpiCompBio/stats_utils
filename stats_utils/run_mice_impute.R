@@ -156,6 +156,10 @@ imp.itt <- as.mids(long)
 The first three steps are carried out here, the last need to be done manually
 according to your needs.
 
+You could also consider passive imputation for this type of variables,
+as explained in:
+https://gerkovink.github.io/miceVignettes/Passive_Post_processing/Passive_imputation_post_processing.html
+
 For an overview see:
 https://stefvanbuuren.name/fimd/sec-knowledge.html
 
@@ -435,6 +439,17 @@ if (!is.null(args[['--vars-interest']]) &
 	main_var <- vars_interest[[1]]
 	# main_var <- 'bmi'
 	print(sprintf('The main variable of interest is: %s', main_var))
+	# TO DO:
+	# also calculate intraclass correlation (ICC) to identify cluster structure
+	# in our dataset, as in:
+	# https://gerkovink.github.io/miceVignettes/Multi_level/Multi_level_data.html
+	# library(pan); library(multilevel)
+	# step 7 for the vars_interest (which must have NAs), as eg
+	# icc(aov(main_var ~ input_data[, vars_interest[[2]]], data = input_data))
+	# and for each pairwise correlation
+	# If there is multilevel structure present, account for it in imputation
+	# use --dry-run, modify pred and meth using a fixed effects approach and impute
+	# Compare ICC for observed, imputed 1, and imputed fixed effects for vars_interest
 }
 # else {
 # 	# Stop if arguments not given:
@@ -498,6 +513,16 @@ if (args[['--dry-run']] == TRUE) { # arg is boolean
 	sessionInfo()
 	q()
 	}
+##########
+
+##########
+# TO DO:
+# Provide a post imputation option, see step 4 in:
+# https://gerkovink.github.io/miceVignettes/Passive_Post_processing/Passive_imputation_post_processing.html
+# where eg:
+# do a dry-run, then provide --meth --pred and --post, then run actual imputation
+# post allows processing of particular variables to constrain them (eg limit them
+# to positive values, given range, etc.)
 ##########
 
 ##########
@@ -610,12 +635,27 @@ if (!is.null(args[['-I']]) &  # arg is NULL
 	# TO DO: save as table with caption
 	# each row corresponds to a missing data pattern (1=observed, 0=missing).
 	# Rows and columns are sorted in increasing amounts of missing information.
+	# number of rows is equal to the number of patterns identified
 	# first column (no header) x observations with y vars missing
 	# The last column and row contain row and column counts, respectively.
 	# lower right corner = total missing data points
 	# last row shows total missing values for each variable
 	# last column (no header) shows number of missing variables
 
+
+	# TO DO:
+	# Does the missing data of var x depend on var y?
+	# Plot histograms conditional on missingness for vars_interest eg:
+	# https://gerkovink.github.io/miceVignettes/Missingness_inspection/Missingness_inspection.html
+	# (in step 8)
+	# R <- is.na(boys$gen)
+	# histogram(~age|R, data=boys)
+
+	# TO DO:
+	# Add a fluxplot to identify powerful predictors
+	# https://gerkovink.github.io/miceVignettes/Sensitivity_analysis/Sensitivity_analysis.html
+	# fx <- fluxplot(input_data)
+	#
 
 	# Check proportion of missing data:
 	prop_NA <- function(x) {sum(is.na(x)) / length(x) * 100}
@@ -743,6 +783,7 @@ for (n in 2:length(imp_pars)) {
 # Free up the cores taken:
 stopCluster(cl)
 gc(verbose = TRUE) # Prob not necessary but ensure R returns memory to the OS
+# TO DO: convert all to functions...
 ##########
 ######################
 
@@ -785,6 +826,8 @@ fwrite(as.list(imp_merged$meth),
 # reporting the flow of participants through the study.
 # If possible, describe reasons for missing data in terms of other variables
 # (rather than just reporting a universal reason such as treatment failure)
+# Use extended STROBE guidelines for reporting of multiple imputation analyses
+# https://www.strobe-statement.org/index.php?id=available-checklists
 
 # Comparison of distribution of key variables in individuals
 # with and without missing data
@@ -792,6 +835,10 @@ fwrite(as.list(imp_merged$meth),
 # Plausibility of the missing at random assumption (discussion and sensitivity analysis)
 # For sensitivity analysis example see:
 # https://gerkovink.github.io/miceVignettes/Sensitivity_analysis/Sensitivity_analysis.html
+# https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5358992/pdf/clep-9-157.pdf
+# Also see how to evaluate the effect of missing data on statistical
+# inferences with mice::ampute:
+# https://rianneschouten.github.io/mice_ampute/vignette/ampute.html
 
 # full report of imputation method including:
 # assumptions of method
@@ -806,6 +853,10 @@ fwrite(as.list(imp_merged$meth),
 # investigate the robustness of key inferences to possible departures
 # from the missing at random assumption by assuming a range of missing
 # not at random mechanisms in sensitivity analyses. See the ampute package for this.
+# Also:
+# After adding back derived variables, run scatter plots of eg BMI observed vs
+# BMI calculated post imputation; plus any other relationships that should match,
+# both to check concordance and check imputation values are plausible
 ##########
 
 ##########
