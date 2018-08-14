@@ -253,11 +253,15 @@ head(input_data) # Columns must be individuals and rows phenotypes
 # mod  <- model.matrix(~1 + pred, data = df_cov)
 mod  <- model.matrix(~1, data = data.frame(input_data))
 mod
-# What I want is like PC loop where PCs are obtained per sample for each sample present.
-# From Andy's example in VD:
-# X			<- cbind( time, time*vit_D )
-# mod0  <- model.matrix(~1, data=data.frame(expr_sv) )
-# mod   <- model.matrix(~1+X, data=data.frame(expr_sv) )
+# Get eg PC loop where PCs are obtained per sample for each sample present.
+# X	<- cbind(var, var*var_interest)
+# null model:
+# mod0 <- model.matrix(~1, data = data.frame(pheno_data))
+# model:
+# mod <- model.matrix(~1 + X, data = data.frame(phen0_data))
+
+# Number of surrogate variables:
+#n.sv <- num.sv(t(input_data), mod, method = "leek")
 
 # Provide a null model matrix:
 # if (is.null(args[['-mod0']]) == FALSE) {
