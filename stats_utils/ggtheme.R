@@ -7,6 +7,8 @@
 # If re-using functions it is much better to copy this to a new script and run here as:
 # source('my_ggplot_theme.R')
 
+# Some colour codes:
+#https://www.google.com/search?q=light+grey+ggplot2&ie=utf-8&oe=utf-8&client=firefox-b-ab
 # A4 paper measures 210x297 millimeters or 8.27x11.69 inches
 ######################
 
@@ -55,7 +57,7 @@ theme_Publication <- function(base_size = 13, base_family = "Times") {
             axis.text = element_text(),
             axis.line = element_line(colour = "black"),
             axis.ticks = element_line(),
-            # panel.grid.major = element_line(colour = "#f0f0f0"),
+            #panel.grid.major = element_line(colour = "#f0f0f0"), # this is like grey90 roughly
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             # legend.key = element_rect(fill = "white", colour = " light grey"),
