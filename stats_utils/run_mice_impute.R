@@ -337,6 +337,17 @@ library(lattice) # for density plots
 ##########
 # minimum correlation for quickpred:
 mincor <- as.numeric(args[['--mincor']])
+# TO DO: add minpuc for minimum proportion of usable cases, default is 0
+# https://www.rdocumentation.org/packages/mice/versions/3.3.0/topics/quickpred
+# TO DO: mice can be very slow with large datasets (eg Airwave ~35000 rows, ~230 columns
+# with <30% missing rows and columns, takes >3 days runnining in parallel
+# profile script
+# TO DO: check logged events for problems, eg:
+# ini <- mice(data, maxit = 0)   # recommended
+# head(ini$loggedEvents, 2)
+# TO DO: check/plot the global influx-outflux pattern with mice::flux(), see
+# https://stefvanbuuren.name/fimd/missing-data-pattern.html#sec:flux
+# see below for fluxplot()
 
 num_cores <- as.integer(args[['--num-cores']])
 
