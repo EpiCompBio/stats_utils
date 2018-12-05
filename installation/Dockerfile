@@ -89,7 +89,6 @@ RUN conda install -y r-mice r-docopt r-ggplot2 r-dplyr r-data.table r-caret r-la
 RUN R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("cowplot", repos = "http://cran.us.r-project.org") ; library("cowplot")' 
 RUN R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("svglite", repos = "http://cran.us.r-project.org") ; library("svglite")' 
 
-RUN R --vanilla -e 'source("https://bioconductor.org/biocLite.R") ; install.packages("parallel", repos = "http://cran.us.r-project.org") ; library("parallel")'
 # Note parallel is a core R package, not on CRAN, and only needs to be loaded, as already installed with base R
 
 # Install rpy2 with conda as pip version causes conflicts:
