@@ -817,6 +817,7 @@ fwrite(as.data.frame(imp_merged$pred),
 			 row.names = TRUE,
 			 quote = FALSE
 )
+
 # Save methods:
 # imputation method used, "" empty string means no NAs
 fwrite(as.list(imp_merged$meth),
@@ -881,6 +882,7 @@ for (i in vars_interest) {
 	out[[i]] <- densityplot(input_data[[i]],
 													xlab = xlab)
 }
+
 # Save to disk, one plot per file:
 for (i in names(out)) {
 	plot_name <- sprintf('densityplots_%s_%s.svg', output_name, i)
@@ -895,9 +897,13 @@ for (i in names(out)) {
 # densityplot(imp_merged, ~ bmi) # will give only one var, has to be unquoted
 # densityplot(imp_merged, ~ bmi | .imp) # will plot each imputed dataset separately
 # TO DO: save legend
-svg(sprintf('densityplots_imputation_%s.svg', output_name))
-lattice::densityplot(imp_merged)
-dev.off()
+# TO DO: this errors if there are only 2 missing rows:
+# if () {
+#   svg(sprintf('densityplots_imputation_%s.svg', output_name))
+#   lattice::densityplot(imp_merged)
+#   dev.off()
+# }
+
 # blue is observed, magenta imputed
 ##########
 
