@@ -205,7 +205,7 @@ str(args)
 
 # Multiple imputation software
 # http://www.stefvanbuuren.nl/mi/Software.html
-#	Multivariate Imputation by Chained Equations
+#  Multivariate Imputation by Chained Equations
 # http://stefvanbuuren.github.io/mice/
 # Multivariate Imputation by Chained Equations
 # https://github.com/stefvanbuuren/mice
@@ -213,10 +213,10 @@ str(args)
 # https://gerkovink.github.io/miceVignettes/Ad_hoc_and_mice/Ad_hoc_methods.html
 
 # Tutorials, etc. (use mice vignettes first):
-#	Imputing Missing Data with R; MICE package | DataScience+
+#  Imputing Missing Data with R; MICE package | DataScience+
 # https://datascienceplus.com/imputing-missing-data-with-r-mice-package/
 # MICE: Multivariate Imputation by Chained Equations in R - MICE in R - Draft.pdf
-#	http://www.stefvanbuuren.nl/publications/MICE%20in%20R%20-%20Draft.pdf
+#  http://www.stefvanbuuren.nl/publications/MICE%20in%20R%20-%20Draft.pdf
 # Multiple Imputation for General Missing Data Patterns in the Presence of
 # High-dimensional Data | Scientific Reports
 # https://www.nature.com/articles/srep21689
@@ -283,31 +283,31 @@ str(args)
 # https://github.com/molgenis/molgenis-pipelines/wiki/How-to-source-another_file.R-from-within-your-R-script
 # Couldn't find a licence at the time (12 June 2018)
 LocationOfThisScript = function() # Function LocationOfThisScript returns the
-	                                # location of this .R script
-	                                # (may be needed to source other files in same dir)
+                                  # location of this .R script
+                                  # (may be needed to source other files in same dir)
 {
-	this.file = NULL
-	# This file may be 'sourced'
-	for (i in -(1:sys.nframe())) {
-		if (identical(sys.function(i),
-									base::source)) this.file = (normalizePath(sys.frame(i)$ofile))
-	}
+  this.file = NULL
+  # This file may be 'sourced'
+  for (i in -(1:sys.nframe())) {
+    if (identical(sys.function(i),
+                  base::source)) this.file = (normalizePath(sys.frame(i)$ofile))
+  }
 
-	if (!is.null(this.file)) return(dirname(this.file))
+  if (!is.null(this.file)) return(dirname(this.file))
 
-	# But it may also be called from the command line
-	cmd.args = commandArgs(trailingOnly = FALSE)
-	cmd.args.trailing = commandArgs(trailingOnly = TRUE)
-	cmd.args = cmd.args[seq.int(from = 1,
-															length.out = length(cmd.args) - length(cmd.args.trailing))]
-	res = gsub("^(?:--file=(.*)|.*)$", "\\1", cmd.args)
+  # But it may also be called from the command line
+  cmd.args = commandArgs(trailingOnly = FALSE)
+  cmd.args.trailing = commandArgs(trailingOnly = TRUE)
+  cmd.args = cmd.args[seq.int(from = 1,
+                              length.out = length(cmd.args) - length(cmd.args.trailing))]
+  res = gsub("^(?:--file=(.*)|.*)$", "\\1", cmd.args)
 
-	# If multiple --file arguments are given, R uses the last one
-	res = tail(res[res != ""], 1)
-	if (0 < length(res)) return(dirname(res))
+  # If multiple --file arguments are given, R uses the last one
+  res = tail(res[res != ""], 1)
+  if (0 < length(res)) return(dirname(res))
 
-	# Both are not the case. Maybe we are in an R GUI?
-	return(NULL)
+  # Both are not the case. Maybe we are in an R GUI?
+  return(NULL)
 }
 Rscripts_dir <- LocationOfThisScript()
 print('Location where this script lives:')
@@ -377,16 +377,16 @@ maxit <- as.integer(args[['--maxit']])
 ##########
 # Read files, this is with data.table:
 if (!is.null(args[['-I']])) {
-	input_name <- as.character(args[['-I']])
-	# input_name <- 'nhanes.tsv'
-	input_data <- fread(input_name,
-											sep = '\t',
-											header = TRUE,
-											stringsAsFactors = FALSE)
+  input_name <- as.character(args[['-I']])
+  # input_name <- 'nhanes.tsv'
+  input_data <- fread(input_name,
+                      sep = '\t',
+                      header = TRUE,
+                      stringsAsFactors = FALSE)
 } else {
-	# Stop if arguments not given:
-	print('You need to provide an input file. This has to be tab separated with headers.')
-	stopifnot(!is.null(args[['-I']]))
+  # Stop if arguments not given:
+  print('You need to provide an input file. This has to be tab separated with headers.')
+  stopifnot(!is.null(args[['-I']]))
 }
 
 print('File being used: ')
@@ -398,15 +398,15 @@ print(input_name)
 # would be used to estimate imputation if left as column).
 # Only run if -I given but without --extend
 if (!is.null(args[['-I']]) &  # arg is NULL
-		args[['--extend']] == FALSE) {  # arg is boolean
-	# When writing out, the long format has .id, as character,
-	# corresponding to the row names
-	# row names are also saved to the dataframes with fwrite at the end.
-	input_data <- as.data.frame(input_data) # needed for plot functions and rownames
-	rownames(input_data) <- input_data[[ID_col]]
-	input_data <- input_data[, -c(ID_col)]
-	print('First few rows of data:')
-	head(input_data)
+    args[['--extend']] == FALSE) {  # arg is boolean
+  # When writing out, the long format has .id, as character,
+  # corresponding to the row names
+  # row names are also saved to the dataframes with fwrite at the end.
+  input_data <- as.data.frame(input_data) # needed for plot functions and rownames
+  rownames(input_data) <- input_data[[ID_col]]
+  input_data <- input_data[, -c(ID_col)]
+  print('First few rows of data:')
+  head(input_data)
 }
 ##########
 
@@ -414,18 +414,18 @@ if (!is.null(args[['-I']]) &  # arg is NULL
 # Set output file names:
 suffix <- 'imputed'
 if (is.null(args[['-O']])) {
-	stopifnot(!is.null(args[['-I']]))
-	print('Output file name not given.')
-	# Split infile name at the last '.':
-	output_name <- strsplit(input_name, "[.]\\s*(?=[^.]+$)", perl = TRUE)[[1]][1]
-	output_file_name <- sprintf('%s_%s.tsv', output_name, suffix)
-	# Save a name also for the long format:
-	output_file_name_long <- sprintf('%s_%s_long.tsv', output_name, suffix)
+  stopifnot(!is.null(args[['-I']]))
+  print('Output file name not given.')
+  # Split infile name at the last '.':
+  output_name <- strsplit(input_name, "[.]\\s*(?=[^.]+$)", perl = TRUE)[[1]][1]
+  output_file_name <- sprintf('%s_%s.tsv', output_name, suffix)
+  # Save a name also for the long format:
+  output_file_name_long <- sprintf('%s_%s_long.tsv', output_name, suffix)
 } else {
-	output_name <- as.character(args[['-O']])
-	output_file_name <- sprintf('%s_%s.tsv', output_name, suffix)
-	# Save a name also for the long format:
-	output_file_name_long <- sprintf('%s_%s_long.tsv', output_name, suffix)
+  output_name <- as.character(args[['-O']])
+  output_file_name <- sprintf('%s_%s.tsv', output_name, suffix)
+  # Save a name also for the long format:
+  output_file_name_long <- sprintf('%s_%s_long.tsv', output_name, suffix)
 }
 print('Outfile with first complete imputed dataset will be named:')
 print(output_file_name)
@@ -436,37 +436,37 @@ print(output_file_name_long)
 ##########
 # Pass a few variables of interest for sanity checking:
 if (!is.null(args[['--vars-interest']]) &
-		args[['--dry-run']] == FALSE) { # dry-run doesn't need vars_interest
-	vars_interest <- as.character(args[['--vars-interest']])
-	# vars_interest <- 'vars_interest.tsv'
-	vars_interest <- fread(vars_interest,
-												 sep = '\t',
-												 header = FALSE,
-												 stringsAsFactors = FALSE)
-	vars_interest <- as.character(vars_interest[, V1])
-	print('Variables of interest:')
-	print(vars_interest)
-	# The first var will be the var of interest:
-	main_var <- vars_interest[[1]]
-	# main_var <- 'bmi'
-	print(sprintf('The main variable of interest is: %s', main_var))
-	# TO DO:
-	# also calculate intraclass correlation (ICC) to identify cluster structure
-	# in our dataset, as in:
-	# https://gerkovink.github.io/miceVignettes/Multi_level/Multi_level_data.html
-	# library(pan); library(multilevel)
-	# step 7 for the vars_interest (which must have NAs), as eg
-	# icc(aov(main_var ~ input_data[, vars_interest[[2]]], data = input_data))
-	# and for each pairwise correlation
-	# If there is multilevel structure present, account for it in imputation
-	# use --dry-run, modify pred and meth using a fixed effects approach and impute
-	# Compare ICC for observed, imputed 1, and imputed fixed effects for vars_interest
+    args[['--dry-run']] == FALSE) { # dry-run doesn't need vars_interest
+  vars_interest <- as.character(args[['--vars-interest']])
+  # vars_interest <- 'vars_interest.tsv'
+  vars_interest <- fread(vars_interest,
+                         sep = '\t',
+                         header = FALSE,
+                         stringsAsFactors = FALSE)
+  vars_interest <- as.character(vars_interest[, V1])
+  print('Variables of interest:')
+  print(vars_interest)
+  # The first var will be the var of interest:
+  main_var <- vars_interest[[1]]
+  # main_var <- 'bmi'
+  print(sprintf('The main variable of interest is: %s', main_var))
+  # TO DO:
+  # also calculate intraclass correlation (ICC) to identify cluster structure
+  # in our dataset, as in:
+  # https://gerkovink.github.io/miceVignettes/Multi_level/Multi_level_data.html
+  # library(pan); library(multilevel)
+  # step 7 for the vars_interest (which must have NAs), as eg
+  # icc(aov(main_var ~ input_data[, vars_interest[[2]]], data = input_data))
+  # and for each pairwise correlation
+  # If there is multilevel structure present, account for it in imputation
+  # use --dry-run, modify pred and meth using a fixed effects approach and impute
+  # Compare ICC for observed, imputed 1, and imputed fixed effects for vars_interest
 }
 # else {
-# 	# Stop if arguments not given:
-# 	print('You need to provide a file with some variables of interest to test.')
-# 	stopifnot(!is.null(args[['--vars-interest']]) &
-# 						args[['--dry-run']] == FALSE)
+#   # Stop if arguments not given:
+#   print('You need to provide a file with some variables of interest to test.')
+#   stopifnot(!is.null(args[['--vars-interest']]) &
+#             args[['--dry-run']] == FALSE)
 # }
 ##########
 
@@ -474,56 +474,56 @@ if (!is.null(args[['--vars-interest']]) &
 # variables such as BMI which should be excluded from the imputation
 # procedure if not needed for imputation and recalculated afterwards:
 if (!is.null(args[['--derived-vars']])) {
-	derived_vars <- as.character(args[['--derived-vars']])
-	# derived_vars <- 'derived_vars.tsv'
-	derived_vars <- fread(derived_vars,
-												 sep = '\t',
-												 header = FALSE,
-												 stringsAsFactors = FALSE)
-	derived_vars <- as.character(derived_vars[, V1])
-	print(sprintf('Derived variables to exclude from imputation: %s', derived_vars))
-	# Exclude from dataset provided:
-	input_data <- input_data[, !(names(input_data) %in% derived_vars)]
-	print('First few rows of data after excluding derived vars:')
-	head(input_data)
+  derived_vars <- as.character(args[['--derived-vars']])
+  # derived_vars <- 'derived_vars.tsv'
+  derived_vars <- fread(derived_vars,
+                         sep = '\t',
+                         header = FALSE,
+                         stringsAsFactors = FALSE)
+  derived_vars <- as.character(derived_vars[, V1])
+  print(sprintf('Derived variables to exclude from imputation: %s', derived_vars))
+  # Exclude from dataset provided:
+  input_data <- input_data[, !(names(input_data) %in% derived_vars)]
+  print('First few rows of data after excluding derived vars:')
+  head(input_data)
 } else {
-	print('Derived variables not provided, using all columns for imputation.')
+  print('Derived variables not provided, using all columns for imputation.')
 }
 ##########
 
 ##########
 # Create a run dry in order to print out correlation matrix and methods chosen:
 if (args[['--dry-run']] == TRUE) { # arg is boolean
-	print('Running a dry imputation to get methods and predictor matrix.')
-	dry_mice <- mice(input_data, maxit = 0, print = F)
-	# Save predictor matrix:
-	# pred[ ,"hyp"] <- 0
-	fwrite(as.data.frame(dry_mice$pred),
-				 sprintf('predictor_matrix_%s', output_file_name),
-				 sep = '\t',
-				 na = 'NA',
-				 col.names = TRUE,
-				 row.names = TRUE,
-				 quote = FALSE
-				 )
-	# Save methods:
-	# overview of the methods in mice can be found by
-	# methods(mice)
-	# dry_mice$meth
-	# Change as eg:
-	# meth["bmi"] <- "norm"
-	fwrite(as.list(dry_mice$meth),
-				 sprintf('methods_%s', output_file_name),
-				 sep = '\t',
-				 na = 'NA',
-				 col.names = TRUE,
-				 row.names = FALSE
-	)
-	# And quit after this:
-	print('Dry run finished, exiting.')
-	sessionInfo()
-	q()
-	}
+  print('Running a dry imputation to get methods and predictor matrix.')
+  dry_mice <- mice(input_data, maxit = 0, print = F)
+  # Save predictor matrix:
+  # pred[ ,"hyp"] <- 0
+  fwrite(as.data.frame(dry_mice$pred),
+         sprintf('predictor_matrix_%s', output_file_name),
+         sep = '\t',
+         na = 'NA',
+         col.names = TRUE,
+         row.names = TRUE,
+         quote = FALSE
+         )
+  # Save methods:
+  # overview of the methods in mice can be found by
+  # methods(mice)
+  # dry_mice$meth
+  # Change as eg:
+  # meth["bmi"] <- "norm"
+  fwrite(as.list(dry_mice$meth),
+         sprintf('methods_%s', output_file_name),
+         sep = '\t',
+         na = 'NA',
+         col.names = TRUE,
+         row.names = FALSE
+  )
+  # And quit after this:
+  print('Dry run finished, exiting.')
+  sessionInfo()
+  q()
+  }
 ##########
 
 ##########
@@ -541,54 +541,54 @@ if (args[['--dry-run']] == TRUE) { # arg is boolean
 # Provide a predictor matrix that determines the relationship between variables
 # that will be used for imputation:
 if (!is.null(args[['--pred']])) { # arg is NULL
-	pred_name <- as.character(args[['--pred']])
-	# pred_name <- 'output_dry_run/predictor_matrix_nhanes_imputed.tsv'
-	pred <- as.data.frame(fread(pred_name,
-													    sep = '\t',
-													    header = TRUE,
-													    stringsAsFactors = FALSE,
-													)
-										)
-	# Needs to be passed as a matrix, first column are variable names, move to rownames:
+  pred_name <- as.character(args[['--pred']])
+  # pred_name <- 'output_dry_run/predictor_matrix_nhanes_imputed.tsv'
+  pred <- as.data.frame(fread(pred_name,
+                              sep = '\t',
+                              header = TRUE,
+                              stringsAsFactors = FALSE,
+                          )
+                    )
+  # Needs to be passed as a matrix, first column are variable names, move to rownames:
   rownames(pred) <- pred[[1]]
   pred <- pred[, -1]
-	pred <- as.matrix(pred)
+  pred <- as.matrix(pred)
   print(sprintf('Predictor matrix provided, using this instead of mice pred: %s',
-								pred_name)
-				)
-	print('First few rows of predictor matrix provided: ')
-	head(pred)
+                pred_name)
+        )
+  print('First few rows of predictor matrix provided: ')
+  head(pred)
 } else {
-	pred <- quickpred(input_data, mincor = mincor)
-	print('Predictor matrix not provided, ')
+  pred <- quickpred(input_data, mincor = mincor)
+  print('Predictor matrix not provided, ')
   print('using mice defaults with quickpred and ')
   print(sprintf('%s for minimum correlation between variables.', mincor))
-	}
+  }
 
 # Provide a methods list to use if not the default:
 if (!is.null(args[['--meth']])) { # arg is NULL
-	meth_name <- as.character(args[['--meth']])
-	# meth_name <- 'methods_nhanes_imputed.tsv'
-	print(sprintf('Methods provided, using this instead of mice defaults: %s',
-								meth_name)
-	)
-	meth <- fread(meth_name,
-								sep = '\t',
-								header = TRUE,
-								stringsAsFactors = FALSE
-								# na.strings = ""
-								)
-	meth_names <- names(meth)
-	meth <- as.character(meth[1, ])
-	names(meth) <- meth_names
-	# Convert NA to literal empty strings:
-	meth <- lapply(meth, function(x){replace(x, x == "NA", as.character(""))})
-	print('First few elements of methods provided: ')
-	head(meth)
+  meth_name <- as.character(args[['--meth']])
+  # meth_name <- 'methods_nhanes_imputed.tsv'
+  print(sprintf('Methods provided, using this instead of mice defaults: %s',
+                meth_name)
+  )
+  meth <- fread(meth_name,
+                sep = '\t',
+                header = TRUE,
+                stringsAsFactors = FALSE
+                # na.strings = ""
+                )
+  meth_names <- names(meth)
+  meth <- as.character(meth[1, ])
+  names(meth) <- meth_names
+  # Convert NA to literal empty strings:
+  meth <- lapply(meth, function(x){replace(x, x == "NA", as.character(""))})
+  print('First few elements of methods provided: ')
+  head(meth)
 } else {
-	meth <- NULL
-	print('Methods not provided, using mice defaults')
-	}
+  meth <- NULL
+  print('Methods not provided, using mice defaults')
+  }
 ##########
 
 ##########
@@ -597,12 +597,12 @@ set.seed(seed = seed)
 
 # Set-up multiple cores if needed
 if (!is.null(args[['--num-cores']])) { # arg is NULL
-	num_cores <- as.integer(args[['--num-cores']])
-	print(sprintf('Number of cores provided, using: %s', num_cores))
+  num_cores <- as.integer(args[['--num-cores']])
+  print(sprintf('Number of cores provided, using: %s', num_cores))
 } else {
-	# Using all cores can slow down the computer, leave one free:
-	num_cores <- max(1, detectCores() - 1)
-	print(sprintf('Detected cores, using: %s', num_cores))
+  # Using all cores can slow down the computer, leave one free:
+  num_cores <- max(1, detectCores() - 1)
+  print(sprintf('Detected cores, using: %s', num_cores))
 }
 
 # Setup the cluster
@@ -624,87 +624,87 @@ clusterSetRNGStream(cl, iseed = seed)
 
 # Only run if -I given but without --extend:
 if (!is.null(args[['-I']]) &  # arg is NULL
-		args[['--extend']] == FALSE) {  # arg is boolean
-	# summary(input_data)
-	# dim(input_data)
+    args[['--extend']] == FALSE) {  # arg is boolean
+  # summary(input_data)
+  # dim(input_data)
 
-	# Inspect the missing data pattern:
-	# TO DO: print out legend
-	svg(sprintf('missingness_pattern_%s.svg', output_name))
-	missingness <- md.pattern(input_data, plot = TRUE)
-	dev.off()
+  # Inspect the missing data pattern:
+  # TO DO: print out legend
+  svg(sprintf('missingness_pattern_%s.svg', output_name))
+  missingness <- md.pattern(input_data, plot = TRUE)
+  dev.off()
 
-	# Save missingness pattern:
-	fwrite(as.data.frame(missingness),
-				 sprintf('missingness_pattern_%s.tsv', output_name),
-				 sep = '\t',
-				 na = 'NA',
-				 col.names = TRUE,
-				 row.names = TRUE, # keep as these are the ID column
-				 quote = FALSE
-	)
-	# TO DO: save as table with caption
-	# each row corresponds to a missing data pattern (1=observed, 0=missing).
-	# Rows and columns are sorted in increasing amounts of missing information.
-	# number of rows is equal to the number of patterns identified
-	# first column (no header) x observations with y vars missing
-	# The last column and row contain row and column counts, respectively.
-	# lower right corner = total missing data points
-	# last row shows total missing values for each variable
-	# last column (no header) shows number of missing variables
+  # Save missingness pattern:
+  fwrite(as.data.frame(missingness),
+         sprintf('missingness_pattern_%s.tsv', output_name),
+         sep = '\t',
+         na = 'NA',
+         col.names = TRUE,
+         row.names = TRUE, # keep as these are the ID column
+         quote = FALSE
+  )
+  # TO DO: save as table with caption
+  # each row corresponds to a missing data pattern (1=observed, 0=missing).
+  # Rows and columns are sorted in increasing amounts of missing information.
+  # number of rows is equal to the number of patterns identified
+  # first column (no header) x observations with y vars missing
+  # The last column and row contain row and column counts, respectively.
+  # lower right corner = total missing data points
+  # last row shows total missing values for each variable
+  # last column (no header) shows number of missing variables
 
 
-	# TO DO:
-	# Does the missing data of var x depend on var y?
-	# Plot histograms conditional on missingness for vars_interest eg:
-	# https://gerkovink.github.io/miceVignettes/Missingness_inspection/Missingness_inspection.html
-	# (in step 8)
-	# R <- is.na(boys$gen)
-	# histogram(~age|R, data=boys)
+  # TO DO:
+  # Does the missing data of var x depend on var y?
+  # Plot histograms conditional on missingness for vars_interest eg:
+  # https://gerkovink.github.io/miceVignettes/Missingness_inspection/Missingness_inspection.html
+  # (in step 8)
+  # R <- is.na(boys$gen)
+  # histogram(~age|R, data=boys)
 
-	# TO DO:
-	# Add a fluxplot to identify powerful predictors
-	# https://gerkovink.github.io/miceVignettes/Sensitivity_analysis/Sensitivity_analysis.html
-	# fx <- fluxplot(input_data)
-	#
+  # TO DO:
+  # Add a fluxplot to identify powerful predictors
+  # https://gerkovink.github.io/miceVignettes/Sensitivity_analysis/Sensitivity_analysis.html
+  # fx <- fluxplot(input_data)
+  #
 
-	# Check proportion of missing data:
-	prop_NA <- function(x) {sum(is.na(x)) / length(x) * 100}
-	# Individuals with more than X% of missing variables:
-	rows_missing <- apply(input_data, 1, prop_NA) # by rows
-	rows_above_cut <- nrow(input_data[which(rows_missing > missingness_cut), ])
-	print(sprintf('Number of rows with >%s%% missing data: %s',
-								missingness_cut, rows_above_cut))
-	# By columns:
-	cols_missing <- apply(input_data, 2, prop_NA)
-	cols_above_cut <- ncol(input_data[, which(cols_missing > missingness_cut)])
-	print(sprintf('Number of columns with >%s%% missing data: %s',
-								missingness_cut, cols_above_cut))
+  # Check proportion of missing data:
+  prop_NA <- function(x) {sum(is.na(x)) / length(x) * 100}
+  # Individuals with more than X% of missing variables:
+  rows_missing <- apply(input_data, 1, prop_NA) # by rows
+  rows_above_cut <- nrow(input_data[which(rows_missing > missingness_cut), ])
+  print(sprintf('Number of rows with >%s%% missing data: %s',
+                missingness_cut, rows_above_cut))
+  # By columns:
+  cols_missing <- apply(input_data, 2, prop_NA)
+  cols_above_cut <- ncol(input_data[, which(cols_missing > missingness_cut)])
+  print(sprintf('Number of columns with >%s%% missing data: %s',
+                missingness_cut, cols_above_cut))
 
-	# See pattern using VIM and mice libraries
-	# Plot aggregations for missing/imputed values:
-	# TO DO: could move this to post imputation to make full use
-	# input_data gets rewritten below though, and is used after input from both
-	# long format for --extension and imputation
-	svg(sprintf('missingness_vars_interest_VIM_%s.svg', output_name))
-	# TO DO: save legend
-	aggr_plot <- aggr(input_data,#[, vars_interest],
-										combined = FALSE, # plot bar and pattern separately
-										only.miss = FALSE, # Plot combinations only for missing variables
-										numbers = TRUE,
-										sortVars = TRUE,
-										labels = names(input_data),#[, vars_interest]),
-										cex.axis = 0.4,
-										gap = 2,
-										ylab = c('Proportion of missing data', 'Pattern')
-	)
-	dev.off()
-	summary(aggr_plot)
-	# Barplot (left) shows the proportion of missing or imputed values in each variable.
-	# Aggregation plot (middle) shows all existing combinations of of  missing  (red),
-	# imputed (orange) and observed (blue) values.
-	# Barplot (right) shows the frequencies of different variable combinations
-	}
+  # See pattern using VIM and mice libraries
+  # Plot aggregations for missing/imputed values:
+  # TO DO: could move this to post imputation to make full use
+  # input_data gets rewritten below though, and is used after input from both
+  # long format for --extension and imputation
+  svg(sprintf('missingness_vars_interest_VIM_%s.svg', output_name))
+  # TO DO: save legend
+  aggr_plot <- aggr(input_data,#[, vars_interest],
+                    combined = FALSE, # plot bar and pattern separately
+                    only.miss = FALSE, # Plot combinations only for missing variables
+                    numbers = TRUE,
+                    sortVars = TRUE,
+                    labels = names(input_data),#[, vars_interest]),
+                    cex.axis = 0.4,
+                    gap = 2,
+                    ylab = c('Proportion of missing data', 'Pattern')
+  )
+  dev.off()
+  summary(aggr_plot)
+  # Barplot (left) shows the proportion of missing or imputed values in each variable.
+  # Aggregation plot (middle) shows all existing combinations of of  missing  (red),
+  # imputed (orange) and observed (blue) values.
+  # Barplot (right) shows the frequencies of different variable combinations
+  }
 ######################
 
 ######################
@@ -712,18 +712,18 @@ if (!is.null(args[['-I']]) &  # arg is NULL
 # Get the appropriate long file and convert with as.mids(), then impute
 # Run if both arguments are given:
 if (!is.null(args[['-I']]) &  # arg is NULL
-		args[['--extend']] == TRUE) { # arg is boolean
-	input_name <- as.character(args[['-I']])
-	# input_name <- 'nhanes_imputed_long.tsv'
-	input_data <- fread(input_name,
-											sep = '\t',
-											header = TRUE,
-											stringsAsFactors = FALSE)
-	print('File being used to extend imputations: ')
-	print(input_name)
-	input_data <- as.mids(as.data.frame(input_data))
-	# head(input_data)
-	# class(input_data)
+    args[['--extend']] == TRUE) { # arg is boolean
+  input_name <- as.character(args[['-I']])
+  # input_name <- 'nhanes_imputed_long.tsv'
+  input_data <- fread(input_name,
+                      sep = '\t',
+                      header = TRUE,
+                      stringsAsFactors = FALSE)
+  print('File being used to extend imputations: ')
+  print(input_name)
+  input_data <- as.mids(as.data.frame(input_data))
+  # head(input_data)
+  # class(input_data)
 } else { # if not extend
   print('--extend not in options.')
 }
@@ -745,48 +745,48 @@ if (!is.null(args[['-I']]) &  # arg is NULL
 # TO DO: check adding extension works OK, when parallelising and with ibind()
 # Only run if -I given but without --extend
 if (!is.null(args[['-I']]) &  # arg is NULL
-		args[['--extend']] == FALSE) {  # arg is boolean
-	print('Starting imputations.')
-	print(sprintf('Total number of imputed datasets to complete: %s', num_cores * m))
+    args[['--extend']] == FALSE) {  # arg is boolean
+  print('Starting imputations.')
+  print(sprintf('Total number of imputed datasets to complete: %s', num_cores * m))
   imp_pars <-
-		parLapply(cl = cl,
-							X = 1:num_cores,
-							fun = function(no) {
-								mice(input_data,
-										 m = m, # Number of imputed datasets, 5 is default
-										 maxit = maxit, # max iterations per imputation
-										 # quickpred = set the minimum correlation for variable
-										 # selection in the predictor matrix:
-										 pred = pred,
-										 print = F, # omit printing of the iteration cycle
-										 diagnostics = TRUE,
-										 meth = meth,
-					           seed = seed
-										 )
-								}
-							)
+    parLapply(cl = cl,
+              X = 1:num_cores,
+              fun = function(no) {
+                mice(input_data,
+                     m = m, # Number of imputed datasets, 5 is default
+                     maxit = maxit, # max iterations per imputation
+                     # quickpred = set the minimum correlation for variable
+                     # selection in the predictor matrix:
+                     pred = pred,
+                     print = F, # omit printing of the iteration cycle
+                     diagnostics = TRUE,
+                     meth = meth,
+                     seed = seed
+                     )
+                }
+              )
 } else if (!is.null(args[['-I']]) & # if both arguments are given run
-					 args[['--extend']] == TRUE) {
-	# imp_pars <- mice.mids(input_data, maxit = 35, print = F)
+           args[['--extend']] == TRUE) {
+  # imp_pars <- mice.mids(input_data, maxit = 35, print = F)
   print('Extending iterations.')
-	imp_pars <-
-		parLapply(cl = cl,
-							X = 1:num_cores,
-							fun = function(no) {
-								mice.mids(input_data,
-													maxit = maxit, # max iterations per imputation
-													print = F # omit printing of the iteration cycle
-								)
-								}
-							)
-	# plot(imp_pars)
-	}
+  imp_pars <-
+    parLapply(cl = cl,
+              X = 1:num_cores,
+              fun = function(no) {
+                mice.mids(input_data,
+                          maxit = maxit, # max iterations per imputation
+                          print = F # omit printing of the iteration cycle
+                )
+                }
+              )
+  # plot(imp_pars)
+  }
 
 # Merge the datasets and create a mids object:
 imp_merged <- imp_pars[[1]]
 for (n in 2:length(imp_pars)) {
-	imp_merged <- mice::ibind(imp_merged,
-											imp_pars[[n]])
+  imp_merged <- mice::ibind(imp_merged,
+                      imp_pars[[n]])
 }
 ##########
 
@@ -810,22 +810,22 @@ gc(verbose = TRUE) # Prob not necessary but ensure R returns memory to the OS
 
 # Save predictor matrix:
 fwrite(as.data.frame(imp_merged$pred),
-			 sprintf('predictor_matrix_%s', output_file_name),
-			 sep = '\t',
-			 na = 'NA',
-			 col.names = TRUE,
-			 row.names = TRUE,
-			 quote = FALSE
+       sprintf('predictor_matrix_%s', output_file_name),
+       sep = '\t',
+       na = 'NA',
+       col.names = TRUE,
+       row.names = TRUE,
+       quote = FALSE
 )
 
 # Save methods:
 # imputation method used, "" empty string means no NAs
 fwrite(as.list(imp_merged$meth),
-			 sprintf('methods_%s', output_file_name),
-			 sep = '\t',
-			 na = 'NA',
-			 col.names = TRUE,
-			 row.names = FALSE
+       sprintf('methods_%s', output_file_name),
+       sep = '\t',
+       na = 'NA',
+       col.names = TRUE,
+       row.names = FALSE
 )
 
 # TO DO: save to file as methods description:
@@ -878,15 +878,15 @@ fwrite(as.list(imp_merged$meth),
 out <- vector(mode = 'list', length = length(vars_interest))
 names(out) <- vars_interest
 for (i in vars_interest) {
-	xlab <- sprintf('%s %s, observed values', input_name, i)
-	out[[i]] <- densityplot(input_data[[i]],
-													xlab = xlab)
+  xlab <- sprintf('%s %s, observed values', input_name, i)
+  out[[i]] <- densityplot(input_data[[i]],
+                          xlab = xlab)
 }
 
 # Save to disk, one plot per file:
 for (i in names(out)) {
-	plot_name <- sprintf('densityplots_%s_%s.svg', output_name, i)
-	svg(plot_name)
+  plot_name <- sprintf('densityplots_%s_%s.svg', output_name, i)
+  svg(plot_name)
 # cols_plot <- max(1, 2 %% length(vars_interest))
 # par(mfrow = c(length(vars_interest), cols_plot))
   print(out[[i]])
@@ -928,12 +928,12 @@ dev.off()
 # TO DO: save legend
 # svg(sprintf('missing_data_scatterplots_vars_interest_%s.svg', output_name))
 # xyplot(imp_merged,
-# 			 bmi ~ age,
-# 			 # pch = 1, cex = 1, strip = T,
-# 			 ylab = sprintf('%s as predicted by %s', main_var, vars_interest[-1]),
-# 			 xlab = '',
-# 			 strip = strip.custom(factor.levels = labels),
-# 			 type = c('p')) # Magenta are imputed, blue observed
+#        bmi ~ age,
+#        # pch = 1, cex = 1, strip = T,
+#        ylab = sprintf('%s as predicted by %s', main_var, vars_interest[-1]),
+#        xlab = '',
+#        strip = strip.custom(factor.levels = labels),
+#        type = c('p')) # Magenta are imputed, blue observed
 # dev.off()
 
 
@@ -947,25 +947,25 @@ dev.off()
 # Very large discrepancies should not exist though, check with:
 svg(sprintf('bwplots_imputation_%s.svg', output_name))
 bwplot(imp_merged,
-			 subset = (.imp == 0 | # get the original data
-			 					 .imp == 1 | .imp == 2 | .imp == 3 | .imp == 4 | .imp == 5 |
-			 					 .imp == 6 | .imp == 7 | .imp == 8 | .imp == 9 | .imp == 10),
-			 # col = mdc(1:2), #col = mdc(1:2), pch=20, cex=1.5,
-			 pch = 1, cex = 0.7,
-			 strip = strip.custom(par.strip.text = list(cex = 0.7))
-			 )
+       subset = (.imp == 0 | # get the original data
+                  .imp == 1 | .imp == 2 | .imp == 3 | .imp == 4 | .imp == 5 |
+                  .imp == 6 | .imp == 7 | .imp == 8 | .imp == 9 | .imp == 10),
+       # col = mdc(1:2), #col = mdc(1:2), pch=20, cex=1.5,
+       pch = 1, cex = 0.7,
+       strip = strip.custom(par.strip.text = list(cex = 0.7))
+       )
 dev.off()
 
 # Stripplots might look better, check the first 10 imputed datasets:
 svg(sprintf('stripplots_imputation_%s.svg', output_name))
 stripplot(imp_merged,
-					subset = (.imp == 0 | # get the original data
-										.imp == 1 | .imp == 2 | .imp == 3 | .imp == 4 | .imp == 5 |
-										.imp == 6 | .imp == 7 | .imp == 8 | .imp == 9 | .imp == 10),
-					# col = mdc(1:2), #col = mdc(1:2), pch=20, cex=1.5,
-					pch = 1, cex = 0.7,
-					strip = strip.custom(par.strip.text = list(cex = 0.7))
-					)
+          subset = (.imp == 0 | # get the original data
+                    .imp == 1 | .imp == 2 | .imp == 3 | .imp == 4 | .imp == 5 |
+                    .imp == 6 | .imp == 7 | .imp == 8 | .imp == 9 | .imp == 10),
+          # col = mdc(1:2), #col = mdc(1:2), pch=20, cex=1.5,
+          pch = 1, cex = 0.7,
+          strip = strip.custom(par.strip.text = list(cex = 0.7))
+          )
 # Magenta are imputed, blue observed
 dev.off()
 
@@ -1018,21 +1018,21 @@ imp_merged_long <- complete(imp_merged, action = 'long', include = TRUE)
 # Save files
 # First imputed dataset in broad format:
 fwrite(imp_merged_comp, output_file_name,
-			 sep = '\t',
-			 na = 'NA',
-			 col.names = TRUE,
-			 row.names = TRUE, # keep as these are the ID column
-			 quote = FALSE,
-			 nThread = num_cores # use all cores available to write out
+       sep = '\t',
+       na = 'NA',
+       col.names = TRUE,
+       row.names = TRUE, # keep as these are the ID column
+       quote = FALSE,
+       nThread = num_cores # use all cores available to write out
 )
 # All imputed datasets in long format:
 fwrite(imp_merged_long, output_file_name_long,
-			 sep = '\t',
-			 na = 'NA',
-			 col.names = TRUE,
-			 row.names = FALSE, # don't keep, IDs are in .id
-			 quote = FALSE,
-			 nThread = num_cores # use all cores available to write out
+       sep = '\t',
+       na = 'NA',
+       col.names = TRUE,
+       row.names = FALSE, # don't keep, IDs are in .id
+       quote = FALSE,
+       nThread = num_cores # use all cores available to write out
 )
 
 gc()
@@ -1049,11 +1049,11 @@ objects_to_save <- c('imp_merged') # needs to be a character vector for save()
 
 # Filename to save current R session, data and objects at the end:
 if (!is.null(args[['--session']])) { # arg is NULL
-	save_session <- sprintf('%s_%s.RData', output_name, suffix)
-	print(sprintf('Saving an R session image as: %s', save_session))
-	save(list = objects_to_save, file = save_session, compress = 'gzip')
+  save_session <- sprintf('%s_%s.RData', output_name, suffix)
+  print(sprintf('Saving an R session image as: %s', save_session))
+  save(list = objects_to_save, file = save_session, compress = 'gzip')
 } else {
-	print('Not saving an R session image, this is the default. Specify
+  print('Not saving an R session image, this is the default. Specify
          the --session option otherwise')
 }
 
