@@ -70,6 +70,7 @@ LC_ALL=C LC_TYPE=C LANG=C sed $'s/[^[:print:]\t]//g' ${INFILE} > ${OUTFILE}
 #metacharacter ^M replacement with vim:
 #https://unix.stackexchange.com/questions/32001/what-is-m-and-how-do-i-get-rid-of-it
 #:s/^M$//
+#:%s/^M/\r/g # this will insert a carriage return instead
 #(Press Ctrl+V Ctrl+M to insert ^M.)
 #####
 
